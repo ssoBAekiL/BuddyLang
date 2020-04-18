@@ -1,6 +1,6 @@
 # buddylang
 
-A new Flutter project.
+A social-chat app with languages and cultere exchanges.
 
 ## Getting Started
 
