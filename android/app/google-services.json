@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "862030379102",
+    "firebase_url": "https://fir-buddylang.firebaseio.com",
+    "project_id": "fir-buddylang",
+    "storage_bucket": "fir-buddylang.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:862030379102:android:9ee659ff46b2d907151ccf",
+        "android_client_info": {
+          "package_name": "com.mc.buddylang"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "862030379102-c40pegu67o37egfnlcmk7oa0ssvdfkah.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAyYFEQ7dIPAmW_6AtHQqSV5Ze9UUmePU4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "862030379102-c40pegu67o37egfnlcmk7oa0ssvdfkah.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
