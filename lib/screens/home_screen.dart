@@ -9,7 +9,9 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: 'Chats'),
+      appBar: AppBar(
+        title: Text('BuddyLang'),
+      ),
     );
   }
 }
