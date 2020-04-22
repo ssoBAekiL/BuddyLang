@@ -20,14 +20,16 @@ class _LoginScreenState extends State<LoginScreen> {
       key: _loginFormKey,
       child: Column(
         children: <Widget>[
-          const SizedBox(height: 10.0),
+          const SizedBox(height: 20.0),
           _buildEmailTF(),
           const SizedBox(height: 20.0),
           _buildPasswordTF(),
           _buildForgotPasswordBtn(),
           _buildRememberMeCheckbox(),
           _buildLoginBtn(),
+          const SizedBox(height: 10.0),
           _buildSignInWithText(),
+          _buildSocialBtnRow(),
         ],
       ),
     );
@@ -38,7 +40,7 @@ class _LoginScreenState extends State<LoginScreen> {
       key: _signupFormKey,
       child: Column(
         children: <Widget>[
-          const SizedBox(height: 10.0),
+          const SizedBox(height: 20.0),
           _buildNameTF(),
           const SizedBox(height: 20.0),
           _buildEmailTF(),
@@ -81,7 +83,7 @@ class _LoginScreenState extends State<LoginScreen> {
               hintStyle: kHintTextStyle,
             ),
             validator: (input) =>
-                input.trim().isEmpty ? 'Please enter a name' : null,
+                input.trim().isEmpty ? 'Per favore inserisci un nome' : null,
             onSaved: (input) => _name = input.trim(),
           ),
         ),
@@ -118,8 +120,9 @@ class _LoginScreenState extends State<LoginScreen> {
               hintText: 'Inserisci la tua Email',
               hintStyle: kHintTextStyle,
             ),
-            validator: (input) =>
-                !input.contains('@') ? 'Please enter a valid email' : null,
+            validator: (input) => !input.contains('@')
+                ? 'Per favore inserisci una mail valida'
+                : null,
             onSaved: (input) => _email = input,
           ),
         ),
@@ -157,7 +160,7 @@ class _LoginScreenState extends State<LoginScreen> {
               hintStyle: kHintTextStyle,
             ),
             validator: (input) =>
-                input.length < 6 ? 'Must be at least 6 characters' : null,
+                input.length < 6 ? 'La password deve essere di almeno 6 caratteri' : null,
             onSaved: (input) => _password = input,
           ),
         ),
@@ -313,20 +316,20 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Widget _buildSocialBtnRow() {
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: 20.0),
+      padding: EdgeInsets.symmetric(vertical: 30.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: <Widget>[
           _buildSocialBtn(
-            () => print('Login with Facebook'),
-            AssetImage(
-              'assets/logos/facebook.jpg',
-            ),
-          ),
-          _buildSocialBtn(
             () => print('Login with Google'),
             AssetImage(
               'assets/logos/google.jpg',
+            ),
+          ),
+          _buildSocialBtn(
+            () => print('Login with Facebook'),
+            AssetImage(
+              'assets/logos/facebook.jpg',
             ),
           ),
         ],
