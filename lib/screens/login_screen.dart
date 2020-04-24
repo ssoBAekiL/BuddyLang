@@ -1,5 +1,5 @@
 import 'package:buddylang/services/auth_service.dart';
-import 'package:buddylang/utilities/constants%20copy.dart';
+import 'package:buddylang/utilities/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -20,16 +20,17 @@ class _LoginScreenState extends State<LoginScreen> {
       key: _loginFormKey,
       child: Column(
         children: <Widget>[
-          const SizedBox(height: 20.0),
+          const SizedBox(height: 18.0),
           _buildEmailTF(),
-          const SizedBox(height: 20.0),
+          const SizedBox(height: 15.0),
           _buildPasswordTF(),
           _buildForgotPasswordBtn(),
           _buildRememberMeCheckbox(),
           _buildLoginBtn(),
-          const SizedBox(height: 10.0),
+          const SizedBox(height: 4.0),
           _buildSignInWithText(),
           _buildSocialBtnRow(),
+          
         ],
       ),
     );
@@ -42,12 +43,12 @@ class _LoginScreenState extends State<LoginScreen> {
         children: <Widget>[
           const SizedBox(height: 20.0),
           _buildNameTF(),
-          const SizedBox(height: 20.0),
+          const SizedBox(height: 15.0),
           _buildEmailTF(),
-          const SizedBox(height: 20.0),
+          const SizedBox(height: 15.0),
           _buildPasswordTF(),
-          const SizedBox(height: 20.0),
-          _buildLoginBtn()
+          const SizedBox(height: 15.0),
+          _buildSignBtn()
         ],
       ),
     );
@@ -79,11 +80,11 @@ class _LoginScreenState extends State<LoginScreen> {
                 Icons.person,
                 color: Colors.white,
               ),
-              hintText: 'Inserisci una Username',
+              hintText: 'Enter a Username',
               hintStyle: kHintTextStyle,
             ),
             validator: (input) =>
-                input.trim().isEmpty ? 'Per favore inserisci un nome' : null,
+                input.trim().isEmpty ? 'Please, enter a Username' : null,
             onSaved: (input) => _name = input.trim(),
           ),
         ),
@@ -117,11 +118,11 @@ class _LoginScreenState extends State<LoginScreen> {
                 Icons.email,
                 color: Colors.white,
               ),
-              hintText: 'Inserisci la tua Email',
+              hintText: 'Enter your Email',
               hintStyle: kHintTextStyle,
             ),
             validator: (input) => !input.contains('@')
-                ? 'Per favore inserisci una mail valida'
+                ? 'Please enter a valid Email'
                 : null,
             onSaved: (input) => _email = input,
           ),
@@ -156,11 +157,12 @@ class _LoginScreenState extends State<LoginScreen> {
                 Icons.lock,
                 color: Colors.white,
               ),
-              hintText: 'Inserisci la tua Password',
+              hintText: 'Enter your Password',
               hintStyle: kHintTextStyle,
             ),
-            validator: (input) =>
-                input.length < 6 ? 'La password deve essere di almeno 6 caratteri' : null,
+            validator: (input) => input.length < 6
+                ? 'La password deve essere di almeno 6 caratteri'
+                : null,
             onSaved: (input) => _password = input,
           ),
         ),
@@ -211,7 +213,7 @@ class _LoginScreenState extends State<LoginScreen> {
         onPressed: () => print('Forgot Password Button Pressed'),
         padding: EdgeInsets.only(right: 0.0),
         child: Text(
-          'PASSWORD DIMENTICATA?',
+          'Forgot Password?',
           style: kLabelStyle,
         ),
       ),
@@ -237,7 +239,7 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
           ),
           Text(
-            'Resta connesso',
+            'Remember me',
             style: kLabelStyle,
           ),
         ],
@@ -258,7 +260,7 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
         color: Colors.white,
         child: Text(
-          'ACCEDI',
+          'LOG IN',
           style: TextStyle(
             color: Color(0xFF527DAA),
             letterSpacing: 1.5,
@@ -271,19 +273,52 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
+  Widget _buildSignBtn() {
+    return Container(
+      padding: EdgeInsets.symmetric(vertical: 10.0),
+      width: double.infinity,
+      child: RaisedButton(
+        elevation: .0,
+        onPressed: _submit,
+        padding: EdgeInsets.all(11.0),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(30.0),
+        ),
+        color: Colors.white,
+        child: Text(
+          'SIGN UP',
+          style: TextStyle(
+            color: Color(0xFF527DAA),
+            letterSpacing: 1.5,
+            fontSize: 20.0,
+            fontWeight: FontWeight.bold,
+            fontFamily: 'OpenSans',
+          ),
+        ),
+      ),
+    );
+  }
+
+
   Widget _buildSignInWithText() {
     return Column(
       children: <Widget>[
         Text(
-          '- OPPURE -',
+          '- OR -',
           style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.w400,
-          ),
+              color: Colors.white,
+              fontWeight: FontWeight.w400,
+              shadows: [
+                Shadow(
+                  blurRadius: 75.0,
+                  color: Colors.black,
+                  offset: Offset(5.0, 5.0),
+                ),
+              ]),
         ),
         SizedBox(height: 13.0),
         Text(
-          'ACCEDI CON',
+          'Sign in with',
           style: kLabelStyle,
         ),
       ],
@@ -294,8 +329,8 @@ class _LoginScreenState extends State<LoginScreen> {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        height: 60.0,
-        width: 60.0,
+        height: 56.0,
+        width: 56.0,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
           color: Colors.white,
@@ -366,6 +401,7 @@ class _LoginScreenState extends State<LoginScreen> {
               Container(
                 height: double.infinity,
                 child: SingleChildScrollView(
+                  physics: const NeverScrollableScrollPhysics(),
                   padding: EdgeInsets.symmetric(
                     horizontal: 40.0,
                     vertical: 40.0,
@@ -373,7 +409,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      const SizedBox(height: 10.0),
+                      const SizedBox(height: 20.0),
                       Text(
                         'Welcome!',
                         style: TextStyle(
@@ -382,12 +418,16 @@ class _LoginScreenState extends State<LoginScreen> {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      const SizedBox(height: 15.0),
+                      const SizedBox(height: 22.0),
+                      
                       Row(
+                        
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: <Widget>[
+                          
                           Container(
-                            width: 150.0,
+                            
+                            width: 130.0,
                             height: 45.0,
                             child: FlatButton(
                               shape: RoundedRectangleBorder(
@@ -395,13 +435,16 @@ class _LoginScreenState extends State<LoginScreen> {
                               ),
                               color: _selectedIndex == 0
                                   ? Colors.white
-                                  : Colors.blue,
+                                  : Colors.blue[450],
                               child: Text(
-                                'Accedi',
+                                'LOG IN',
                                 style: TextStyle(
+                                  letterSpacing: 1.5,
                                   fontSize: 20.0,
+                                  fontWeight: FontWeight.bold,
+                                  fontFamily: 'OpenSans',
                                   color: _selectedIndex == 0
-                                      ? Colors.blue
+                                      ? Colors.blue[600]
                                       : Colors.white,
                                 ),
                               ),
@@ -410,7 +453,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                           ),
                           Container(
-                            width: 150.0,
+                            width: 130.0,
                             height: 45.0,
                             child: FlatButton(
                               shape: RoundedRectangleBorder(
@@ -418,11 +461,14 @@ class _LoginScreenState extends State<LoginScreen> {
                               ),
                               color: _selectedIndex == 1
                                   ? Colors.white
-                                  : Colors.blue,
+                                  : Colors.blue[450],
                               child: Text(
-                                'Registrati',
+                                'SIGN UP',
                                 style: TextStyle(
+                                  letterSpacing: 1.5,
                                   fontSize: 20.0,
+                                  fontWeight: FontWeight.bold,
+                                  fontFamily: 'OpenSans',
                                   color: _selectedIndex == 1
                                       ? Colors.blue
                                       : Colors.white,
