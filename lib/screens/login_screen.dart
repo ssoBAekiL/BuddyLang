@@ -1,5 +1,6 @@
 import 'package:buddylang/services/auth_service.dart';
 import 'package:buddylang/utilities/constants.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -350,19 +351,20 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Widget _buildSocialBtnRow() {
+   
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 30.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: <Widget>[
           _buildSocialBtn(
-            () => print('Login with Google'),
+           () => AuthService().googleSignUp(),
             AssetImage(
               'assets/logos/google.jpg',
             ),
           ),
           _buildSocialBtn(
-            () => print('Login with Facebook'),
+            () => AuthService().signUpWithFacebook(),
             AssetImage(
               'assets/logos/facebook.jpg',
             ),

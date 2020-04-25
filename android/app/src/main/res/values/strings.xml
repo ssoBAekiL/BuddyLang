@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+<!--    Please update your facebook config in this strings-->
+    <string name="app_name">BuddyLang</string>
+    <string name="facebook_app_id">1005135953213796</string> 
+    <string name="fb_login_protocol_scheme">fb1005135953213796</string>
+</resources>
