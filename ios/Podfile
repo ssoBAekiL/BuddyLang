@@ -34,6 +34,9 @@ end
 
 target 'Runner' do
   use_frameworks!
+pod 'FBSDKLoginKit'
+pod 'Firebase/Auth'
+
   use_modular_headers!
   
   # Flutter Pod
@@ -88,3 +91,7 @@ post_install do |installer|
     end
   end
 end
+
+    
+
+
