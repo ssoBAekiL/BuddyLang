@@ -4,6 +4,7 @@ import 'package:buddylang/screens/login_screen.dart';
 import 'package:buddylang/services/auth_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:provider/provider.dart';
 
 void main() => runApp(MultiProvider(providers: [
@@ -15,8 +16,8 @@ void main() => runApp(MultiProvider(providers: [
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
-  
-  @override
+
+  @override//
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'BuddyLang',
@@ -28,8 +29,12 @@ class MyApp extends StatelessWidget {
         stream: Provider.of<AuthService>(context, listen: false).user,
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           if (snapshot.hasData) {
-            Provider.of<UserData>(context, listen: false).currentUserId = snapshot.data.uid;
-            return HomeScreen();
+            Provider.of<UserData>(context, listen: false).currentUserId =
+                snapshot.data.uid;
+            return (snapshot.data.isEmailVerified ||
+                    FacebookLogin().isLoggedIn != null)
+                ? HomeScreen()
+                : LoginScreen();
           } else {
             return LoginScreen();
           }

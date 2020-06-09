@@ -17,6 +17,7 @@ abstract class BaseAuth {
   Future<void> googleSignUp();
   Future<void> signOut();
   Future<FirebaseUser> getCurrentUser();
+  Future<String> getUid();
   Future<void> signUpWithFacebook();
   Future<void> resetPassword(String email);
 }
@@ -29,7 +30,7 @@ class AuthService implements BaseAuth {
   Stream<FirebaseUser> get user => _auth.onAuthStateChanged;
 
   Stream<FirebaseUser> get onAuthStateChanged {
-    return _auth.onAuthStateChanged.where((user)=> user.isEmailVerified);
+    return _auth.onAuthStateChanged.where((user) => user.isEmailVerified);
   }
 
   @override
@@ -46,29 +47,27 @@ class AuthService implements BaseAuth {
           'email': email,
           'token': token,
         });
-  
-      //isEmailVerified();
 
-      //authService.isEmailVerified();
-    
-       if(!authResult.user.isEmailVerified)
-       await sendEmailVerification();
-       return signOut();
+        //isEmailVerified();
+
+        //authService.isEmailVerified();
+
+        if (!authResult.user.isEmailVerified) await sendEmailVerification();
+        return signOut();
       }
       //  await signOut();
-      
+
     } on PlatformException catch (err) {
       throw (err);
     }
   }
 
-/*
-  signOut() {
-    final FirebaseAuth _auth = FirebaseAuth.instance;
-    _auth.signOut();
-    return Container(width: 0.0, height: 0.0);
+  @override
+  Future<String> getUid() async {
+    FirebaseUser user = await _auth.currentUser();
+    return user.uid.toString();
   }
-*/
+
   @override
   Future<void> login(String email, String password) async {
     try {
@@ -78,10 +77,11 @@ class AuthService implements BaseAuth {
     }
   }
 
-@override
-Future<void> resetPassword(String email) async {
+  @override
+  Future<void> resetPassword(String email) async {
     await _auth.sendPasswordResetEmail(email: email);
-} 
+  }
+
   @override
   Future<FirebaseUser> getCurrentUser() async {
     FirebaseUser user = await _auth.currentUser();
@@ -152,9 +152,9 @@ Future<void> resetPassword(String email) async {
         );
         final FirebaseUser user =
             (await FirebaseAuth.instance.signInWithCredential(credential)).user;
-           
+
         print('signed in ' + user.displayName);
-      
+
         return user;
       }
     } catch (e) {
@@ -181,5 +181,4 @@ Future<void> resetPassword(String email) async {
     FirebaseUser user = await _auth.currentUser();
     return user.isEmailVerified;
   }
-
 }
