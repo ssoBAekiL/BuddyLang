@@ -1,18 +1,38 @@
 import 'package:buddylang/models/user_model.dart';
+//import 'package:buddylang/screens/home_screen.dart';
+//import 'package:buddylang/screens/login_screen.dart';
 import 'package:buddylang/utilities/constants.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/services.dart';
+//import 'package:flutter/widgets.dart';
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
-class AuthService {
+abstract class BaseAuth {
+  Future<void> signup(String name, String email, String password);
+  Future<void> login(String email, String password);
+  Future<void> sendEmailVerification();
+  Future<bool> isEmailVerified();
+  Future<void> googleSignUp();
+  Future<void> signOut();
+  Future<FirebaseUser> getCurrentUser();
+  Future<void> signUpWithFacebook();
+  Future<void> resetPassword(String email);
+}
+
+class AuthService implements BaseAuth {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   final FirebaseMessaging _messaging = FirebaseMessaging();
 
   Stream<FirebaseUser> get user => _auth.onAuthStateChanged;
 
+  Stream<FirebaseUser> get onAuthStateChanged {
+    return _auth.onAuthStateChanged.where((user)=> user.isEmailVerified);
+  }
+
+  @override
   Future<void> signup(String name, String email, String password) async {
     try {
       AuthResult authResult = await _auth.createUserWithEmailAndPassword(
@@ -26,18 +46,52 @@ class AuthService {
           'email': email,
           'token': token,
         });
+  
+      //isEmailVerified();
+
+      //authService.isEmailVerified();
+    
+       if(!authResult.user.isEmailVerified)
+       await sendEmailVerification();
+       return signOut();
       }
+      //  await signOut();
+      
     } on PlatformException catch (err) {
       throw (err);
     }
   }
 
+/*
+  signOut() {
+    final FirebaseAuth _auth = FirebaseAuth.instance;
+    _auth.signOut();
+    return Container(width: 0.0, height: 0.0);
+  }
+*/
+  @override
   Future<void> login(String email, String password) async {
     try {
       await _auth.signInWithEmailAndPassword(email: email, password: password);
     } on PlatformException catch (err) {
       throw (err);
     }
+  }
+
+@override
+Future<void> resetPassword(String email) async {
+    await _auth.sendPasswordResetEmail(email: email);
+} 
+  @override
+  Future<FirebaseUser> getCurrentUser() async {
+    FirebaseUser user = await _auth.currentUser();
+    return user;
+  }
+
+  @override
+  Future<void> sendEmailVerification() async {
+    FirebaseUser user = await _auth.currentUser();
+    user.sendEmailVerification();
   }
 
   Future<void> logout() async {
@@ -54,6 +108,7 @@ class AuthService {
         .setData({'token': ''}, merge: true);
   }
 
+  @override
   Future<void> googleSignUp() async {
     try {
       final GoogleSignIn _googleSignIn = GoogleSignIn(
@@ -80,10 +135,12 @@ class AuthService {
     }
   }
 
+  @override
   Future<void> signOut() async {
     await _auth.signOut();
   }
 
+  @override
   Future<void> signUpWithFacebook() async {
     try {
       var facebookLogin = new FacebookLogin();
@@ -95,7 +152,9 @@ class AuthService {
         );
         final FirebaseUser user =
             (await FirebaseAuth.instance.signInWithCredential(credential)).user;
+           
         print('signed in ' + user.displayName);
+      
         return user;
       }
     } catch (e) {
@@ -116,4 +175,11 @@ class AuthService {
       }
     }
   }
+
+  @override
+  Future<bool> isEmailVerified() async {
+    FirebaseUser user = await _auth.currentUser();
+    return user.isEmailVerified;
+  }
+
 }

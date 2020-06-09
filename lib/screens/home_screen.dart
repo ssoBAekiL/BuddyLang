@@ -1,4 +1,5 @@
 import 'package:buddylang/services/auth_service.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -21,6 +22,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -29,9 +31,12 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         body: AnnotatedRegion<SystemUiOverlayStyle>(
             value: SystemUiOverlayStyle.light,
+            
             child: GestureDetector(
                 onTap: () => FocusScope.of(context).unfocus(),
+              
                 child: Stack(children: <Widget>[
+                 
                   _buildDrawerOption(Icon(Icons.directions_run), 'LogOut',
                       () => AuthService().signOut())
                 ]))));
