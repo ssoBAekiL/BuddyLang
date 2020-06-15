@@ -1,4 +1,7 @@
 
+import 'package:buddylang/models/user.dart';
+import 'package:buddylang/models/user_data.dart';
+import 'package:buddylang/screens/conversations_screen.dart';
 import 'package:buddylang/screens/home_screen.dart';
 import 'package:buddylang/services/auth_service.dart';
 import 'package:buddylang/utilities/constants.dart';
@@ -13,10 +16,9 @@ class LoginScreen extends StatefulWidget {
   @override
   _LoginScreenState createState() => _LoginScreenState();
 
-  LoginScreen({this.auth, this.onSignedIn});
+  LoginScreen({this.auth});
   final BaseAuth auth;
 
-  final VoidCallback onSignedIn;
 }
 
 class _LoginScreenState extends State<LoginScreen> {
@@ -507,7 +509,7 @@ signOut() {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+            return Scaffold(
       body: AnnotatedRegion<SystemUiOverlayStyle>(
         value: SystemUiOverlayStyle.light,
         child: GestureDetector(
@@ -620,6 +622,47 @@ signOut() {
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+
+class PreLogin extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => UserData()),
+      Provider<AuthService>(
+        create: (_) => AuthService())
+      ],
+      child: Prova(),
+    );
+  }
+}
+
+class Prova extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+     return MaterialApp(
+      title: 'BuddyLang',
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        primaryColor: Colors.white,
+      ),
+      home: StreamBuilder<FirebaseUser>(
+        stream: Provider.of<AuthService>(context, listen: false).user,
+        builder: (BuildContext context, AsyncSnapshot snapshot) {
+          if (snapshot.hasData) {
+            User.uid = snapshot.data.uid;
+            return (snapshot.data.isEmailVerified)
+                ? HomeScreen()
+                : LoginScreen();
+          } else {
+            return LoginScreen();
+          }
+        },
       ),
     );
   }

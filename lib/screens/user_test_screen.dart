@@ -1,45 +1,41 @@
-import 'package:buddylang/models/user.dart';
+import 'dart:io';
 import 'package:buddylang/services/auth_service.dart';
 import 'package:buddylang/services/database.dart';
+import 'package:buddylang/services/storage.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:buddylang/models/user.dart';
+import 'package:image_picker/image_picker.dart';
 
-class HomeScreen extends StatefulWidget {
+class UserTestScreen extends StatefulWidget {
   @override
-  _HomeScreenState createState() => _HomeScreenState();
+  _UserTestScreenState createState() => _UserTestScreenState();
 }
 
-final String defaultImage = 'https://firebasestorage.googleapis.com/v0/b/fir-buddylang.appspot.com/o/userImages%2Fuser_default.png?alt=media&token=209e897d-ab1e-41c6-9ebb-d90c94a6581d';
-  User user;
+class _UserTestScreenState extends State<UserTestScreen> {
 
-class _HomeScreenState extends State<HomeScreen> {
-  _buildDrawerOption(Icon icon, String title, Function onTap) {
-    return ListTile(
-      leading: icon,
-      title: Text(
-        title,
-        style: TextStyle(
-          fontSize: 20.0,
-        ),
-      ),
-      onTap: onTap,
-    );
+  File imageFile;
+  Image prova;
+  String uid;
+
+  Future<void> _pickImage(ImageSource source) async {
+    File selected = await ImagePicker.pickImage(source: source);
+
+    setState(() {
+      imageFile = selected;
+    });
   }
 
+ // 'https://miro.medium.com/max/1400/1*mk1-6aYaf_Bes1E3Imhc0A.jpeg'
+// NetworkImage prova = NetworkImage('https://firebasestorage.googleapis.com/v0/b/fir-buddylang.appspot.com/o/userImages%2FprovaAvatar2?alt=media&token=afe5f423-13b2-4911-93c4-09f297c59652');
+  final String defaultImage = 'https://firebasestorage.googleapis.com/v0/b/fir-buddylang.appspot.com/o/userImages%2Fuser_default.png?alt=media&token=209e897d-ab1e-41c6-9ebb-d90c94a6581d';
+  User user;
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          title: Text('BuddyLang'),
-        ),
-        body: AnnotatedRegion<SystemUiOverlayStyle>(
-            value: SystemUiOverlayStyle.light,
-            
-            child: StreamBuilder(
-          stream: DatabaseService().getUserStream(User.uid),
+    AuthService().getUid().then((u) => uid = u);
+    return StreamBuilder(
+          stream: DatabaseService().getUserStream(uid),
           builder: (context, snapshot) {
             if (!snapshot.hasData)
               return Scaffold(
@@ -69,18 +65,14 @@ class _HomeScreenState extends State<HomeScreen> {
             errorWidget: (context, url, error) => Icon(Icons.error),
             ),
             Text(user.toString()),
-            GestureDetector(
-                onTap: () => FocusScope.of(context).unfocus(),
-              
-                child: Stack(children: <Widget>[
-                 
-                  _buildDrawerOption(Icon(Icons.directions_run), 'LogOut',
-                      () => AuthService().signOut())
-                ]))
+            RaisedButton(onPressed: ()  {_pickImage(ImageSource.gallery);
+              StorageService.uploadUserImage(imageFile, user.reference.toString()).then((url) => user.update(newProfileImageUrl: url));
+            },
+            child: Text('Select'))
           ],
         )
       ),
     );}
-  })));
+  });
   }
 }
