@@ -13,7 +13,7 @@ class ChatInstance extends StatefulWidget {
 }
 
 class _ChatInstanceState extends State<ChatInstance> {
-  final String uid = '0yMz5c6hmd6JPyZXPIdD';
+  final String uid = User.uid;
 
   final DatabaseService database = DatabaseService();
 
@@ -23,8 +23,8 @@ class _ChatInstanceState extends State<ChatInstance> {
 
   ScrollController controller = new ScrollController(initialScrollOffset: 45.0);
 
-  //User receiver; // User object representing the messages receiver
-  String receiver;
+  User receiver;
+  //String receiver;
 
   @override
   Widget build(BuildContext context) {
@@ -39,90 +39,112 @@ class _ChatInstanceState extends State<ChatInstance> {
             return Scaffold(body: Center(child: CircularProgressIndicator()));
           else {
             chat = Chat.fromSnapshot(snapshot.data);
+            int receiverInt;
             if (receiver == null)
-              chat.users[0] == uid
+              chat.users[0] == uid ? receiverInt = 1 : receiverInt = 0;
+            /*chat.users[0] == uid
                   ? receiver = chat.users[1]
-                  : receiver = chat.users[0];
-            return Scaffold(
-                appBar: AppBar(title: Text(receiver), centerTitle: true),
-                body: SafeArea(
-                  child: GestureDetector(
-                    onTap: () {
-                      FocusScope.of(context).requestFocus(new FocusNode());
-                    },
-                    child: Column(
-                      mainAxisSize: MainAxisSize.max,
-                      children: <Widget>[
-                        Flexible(
-                          child: ListView.builder(
-                              controller: controller,
-                              itemCount: chat.messages.length,
-                              itemBuilder: (BuildContext ctxt, int index) {
-                                DateTime previousMessageDate = DateTime.now();
-                                if (index > 0)
-                                  previousMessageDate =
-                                      DateTime.fromMillisecondsSinceEpoch(
-                                          chat.messages[index - 1].timeStamp);
+                  : receiver = chat.users[0];*/
+            return StreamBuilder(
+              stream: DatabaseService().getUserStream(chat.users[receiverInt]),
+              builder: (context, snapshot) {
+                if (!snapshot.hasData)
+                  return Scaffold(
+                    body: Center(child: CircularProgressIndicator()),
+                  );
+                else {
+                  receiver = User.fromSnapshot(snapshot.data);
+                  return Scaffold(
+                      appBar:
+                          AppBar(title: Text(receiver.name), centerTitle: true),
+                      body: SafeArea(
+                        child: GestureDetector(
+                          onTap: () {
+                            FocusScope.of(context)
+                                .requestFocus(new FocusNode());
+                          },
+                          child: Column(
+                            mainAxisSize: MainAxisSize.max,
+                            children: <Widget>[
+                              Flexible(
+                                child: ListView.builder(
+                                    controller: controller,
+                                    itemCount: chat.messages.length,
+                                    itemBuilder:
+                                        (BuildContext ctxt, int index) {
+                                      DateTime previousMessageDate =
+                                          DateTime.now();
+                                      if (index > 0)
+                                        previousMessageDate =
+                                            DateTime.fromMillisecondsSinceEpoch(
+                                                chat.messages[index - 1]
+                                                    .timeStamp);
 
-                                DateTime messageDate =
-                                    DateTime.fromMillisecondsSinceEpoch(
-                                        chat.messages[index].timeStamp);
-                                if (index == 0 ||
-                                    messageDate.day !=
-                                        previousMessageDate.day ||
-                                    messageDate.month !=
-                                        previousMessageDate.month ||
-                                    messageDate.year !=
-                                        previousMessageDate.year) {
-                                  return Column(children: <Widget>[
-                                    Bubble.dateBubble(messageDate),
-                                    Bubble.fromMessage(chat, index, uid, true)
-                                  ]);
-                                }
-                                
-                                return Bubble.fromMessage(
-                                    chat, index, uid, false);
-                              }),
+                                      DateTime messageDate =
+                                          DateTime.fromMillisecondsSinceEpoch(
+                                              chat.messages[index].timeStamp);
+                                      if (index == 0 ||
+                                          messageDate.day !=
+                                              previousMessageDate.day ||
+                                          messageDate.month !=
+                                              previousMessageDate.month ||
+                                          messageDate.year !=
+                                              previousMessageDate.year) {
+                                        return Column(children: <Widget>[
+                                          Bubble.dateBubble(messageDate),
+                                          Bubble.fromMessage(
+                                              chat, index, uid, true)
+                                        ]);
+                                      }
+
+                                      return Bubble.fromMessage(
+                                          chat, index, uid, false);
+                                    }),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.fromLTRB(
+                                    10.0, 0.0, 10.0, 0.0),
+                                child: Row(children: <Widget>[
+                                  Flexible(
+                                    child: TextField(
+                                      controller: _textController,
+                                      keyboardType: TextInputType.multiline,
+                                      minLines: 1,
+                                      maxLines: 5,
+                                      decoration: InputDecoration(
+                                          hintText: 'Type a message'),
+                                    ),
+                                  ),
+                                  SizedBox(width: 10.0),
+                                  RaisedButton(
+                                    color: Colors.lightBlue,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius:
+                                          new BorderRadius.circular(18.0),
+                                    ),
+                                    onPressed: () {
+                                      if (_textController.text != "") {
+                                        chat.sendMessage(Message(
+                                            uid, _textController.text,
+                                            timeStamp: DateTime.now()
+                                                .millisecondsSinceEpoch));
+                                        _textController.clear();
+                                      }
+                                      FocusScope.of(context)
+                                          .requestFocus(new FocusNode());
+                                    },
+                                    child:
+                                        Icon(Icons.send, color: Colors.white),
+                                  )
+                                ]),
+                              )
+                            ],
+                          ),
                         ),
-                        Padding(
-                          padding:
-                              const EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 0.0),
-                          child: Row(children: <Widget>[
-                            Flexible(
-                              child: TextField(
-                                controller: _textController,
-                                keyboardType: TextInputType.multiline,
-                                minLines: 1,
-                                maxLines: 5,
-                                decoration:
-                                    InputDecoration(hintText: 'Type a message'),
-                              ),
-                            ),
-                            SizedBox(width: 10.0),
-                            RaisedButton(
-                              color: Colors.lightBlue,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: new BorderRadius.circular(18.0),
-                              ),
-                              onPressed: () {
-                                if (_textController.text != "") {
-                                  chat.sendMessage(Message(
-                                      uid, _textController.text,
-                                      timeStamp: DateTime.now()
-                                          .millisecondsSinceEpoch));
-                                  _textController.clear();
-                                }
-                                FocusScope.of(context)
-                                    .requestFocus(new FocusNode());
-                              },
-                              child: Icon(Icons.send, color: Colors.white),
-                            )
-                          ]),
-                        )
-                      ],
-                    ),
-                  ),
-                ));
+                      ));
+                }
+              },
+            );
           }
         });
   }
