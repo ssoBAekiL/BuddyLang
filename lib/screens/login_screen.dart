@@ -1,8 +1,4 @@
-
-import 'package:buddylang/models/user.dart';
-import 'package:buddylang/models/user_data.dart';
-import 'package:buddylang/screens/conversations_screen.dart';
-import 'package:buddylang/screens/home_screen.dart';
+import 'package:buddylang/screens/initial_screen.dart';
 import 'package:buddylang/services/auth_service.dart';
 import 'package:buddylang/utilities/constants.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -18,7 +14,6 @@ class LoginScreen extends StatefulWidget {
 
   LoginScreen({this.auth});
   final BaseAuth auth;
-
 }
 
 class _LoginScreenState extends State<LoginScreen> {
@@ -172,7 +167,7 @@ class _LoginScreenState extends State<LoginScreen> {
               hintStyle: kHintTextStyle,
             ),
             validator: (input) => input.length < 6
-                ? 'La password deve essere di almeno 6 caratteri'
+                ? 'Password must contain least 6 characters'
                 : null,
             onSaved: (input) => _password = input,
           ),
@@ -183,37 +178,29 @@ class _LoginScreenState extends State<LoginScreen> {
 
   _submit() async {
     final authService = Provider.of<AuthService>(context, listen: false);
-  //  final FirebaseAuth _auth = FirebaseAuth.instance;
-   // FirebaseUser user = await _auth.currentUser();
+    //  final FirebaseAuth _auth = FirebaseAuth.instance;
+    // FirebaseUser user = await _auth.currentUser();
     AsyncSnapshot snapshot;
-  
+
     try {
       if (_selectedIndex == 0 && _loginFormKey.currentState.validate()) {
         _loginFormKey.currentState.save();
         await authService.login(_email, _password);
       } else if (_selectedIndex == 1 &&
           _signupFormKey.currentState.validate()) {
-       _signupFormKey.currentState.save();
-       await authService.signup(_name, _email, _password);
-      await _showVerifyEmailSentDialog();
-        
-     if (snapshot.hasData) 
-      
-    return snapshot.data.isEmailVerified ? LoginScreen() : signOut();
-     else 
-     return LoginScreen();
+        _signupFormKey.currentState.save();
+        await authService.signup(_name, _email, _password);
+        await _showVerifyEmailSentDialog();
+
+        if (snapshot.hasData)
+          return snapshot.data.isEmailVerified ? LoginScreen() : signOut();
+        else
+          return LoginScreen();
 
         //authService.isEmailVerified();
-    
-        
-         
-        
-        
-           
-           
-           
-       // return LoginScreen();
-        
+
+        // return LoginScreen();
+
         //authService.sendEmailVerification();
 
       }
@@ -232,7 +219,6 @@ class _LoginScreenState extends State<LoginScreen> {
           actions: <Widget>[
             FlatButton(
               child: Text('Ok'),
-              
               onPressed: () => Navigator.pop(context),
             ),
           ],
@@ -241,7 +227,7 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-signOut() {
+  signOut() {
     final FirebaseAuth _auth = FirebaseAuth.instance;
     _auth.signOut();
     return Container(width: 0.0, height: 0.0);
@@ -255,14 +241,12 @@ signOut() {
         return AlertDialog(
           title: new Text("Verify your account"),
           content:
-              new Text("Link to verify account has been sent to your email"),
+              new Text("Link to verify account has been sent to your email."),
           actions: <Widget>[
             new FlatButton(
               child: new Text("Dismiss"),
               onPressed: () {
-                
-               Navigator.of(context).pop();
-                
+                Navigator.of(context).pop();
               },
             ),
           ],
@@ -278,8 +262,8 @@ signOut() {
         // return object of type Dialog
         return AlertDialog(
           title: new Text("Reset your Password"),
-          content:
-              new Text("Link to verify reset your password has been sent to your email"),
+          content: new Text(
+              "Link to verify reset your password has been sent to your email"),
           actions: <Widget>[
             new FlatButton(
               child: new Text("Dismiss"),
@@ -330,18 +314,15 @@ signOut() {
   }
   */
 
- // bool _rememberMe = false;
+  // bool _rememberMe = false;
 
   _buildForgotPasswordBtn() {
     final authService = Provider.of<AuthService>(context, listen: false);
     return Container(
-      
       alignment: Alignment.centerRight,
       child: FlatButton(
-        
-        onPressed: (){
+        onPressed: () {
           authService.resetPassword(_email);
-        
         },
         padding: EdgeInsets.only(right: 0.0),
         child: Text(
@@ -509,7 +490,7 @@ signOut() {
 
   @override
   Widget build(BuildContext context) {
-            return Scaffold(
+    return Scaffold(
       body: AnnotatedRegion<SystemUiOverlayStyle>(
         value: SystemUiOverlayStyle.light,
         child: GestureDetector(
@@ -622,47 +603,6 @@ signOut() {
             ],
           ),
         ),
-      ),
-    );
-  }
-}
-
-
-class PreLogin extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_) => UserData()),
-      Provider<AuthService>(
-        create: (_) => AuthService())
-      ],
-      child: Prova(),
-    );
-  }
-}
-
-class Prova extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-     return MaterialApp(
-      title: 'BuddyLang',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primaryColor: Colors.white,
-      ),
-      home: StreamBuilder<FirebaseUser>(
-        stream: Provider.of<AuthService>(context, listen: false).user,
-        builder: (BuildContext context, AsyncSnapshot snapshot) {
-          if (snapshot.hasData) {
-            User.uid = snapshot.data.uid;
-            return (snapshot.data.isEmailVerified)
-                ? HomeScreen()
-                : LoginScreen();
-          } else {
-            return LoginScreen();
-          }
-        },
       ),
     );
   }

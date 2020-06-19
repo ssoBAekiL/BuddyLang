@@ -1,11 +1,8 @@
-import 'package:buddylang/models/user_model.dart';
-//import 'package:buddylang/screens/home_screen.dart';
-//import 'package:buddylang/screens/login_screen.dart';
+import 'package:buddylang/models/user.dart';
 import 'package:buddylang/utilities/constants.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/services.dart';
-//import 'package:flutter/widgets.dart';
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
@@ -165,9 +162,9 @@ class AuthService implements BaseAuth {
   Future<void> updateToken() async {
     final currentUser = await _auth.currentUser();
     final token = await _messaging.getToken();
-    final userDoc = await usersRef.document(currentUser.uid).get();
-    if (userDoc.exists) {
-      User user = User.fromDoc(userDoc);
+    final userSnapshot = await usersRef.document(currentUser.uid).get();
+    if (userSnapshot.exists) {
+      User user = User.fromSnapshot(userSnapshot);
       if (token != user.token) {
         usersRef
             .document(currentUser.uid)

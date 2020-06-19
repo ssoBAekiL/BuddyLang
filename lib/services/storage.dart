@@ -9,7 +9,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 
 
 class StorageService {
-  final FirebaseStorage _reference =
+  static final FirebaseStorage _reference =
     FirebaseStorage(storageBucket: 'gs://fir-buddylang.appspot.com/'); // reference to firebase storage main folder
   static final StorageReference _userImageReference =
     FirebaseStorage(storageBucket: 'gs://fir-buddylang.appspot.com/').ref().child('userImages'); // reference to firebase storage profile pictures folder
@@ -32,7 +32,7 @@ class StorageService {
 
   /*  Function that given a StorageReference actually takes care of uploading any image */
   static Future<String> _uploadImage(File file, String filename, StorageReference reference) async {
-    final StorageUploadTask uploadTask = _userImageReference.child(filename).putFile(file);
+    final StorageUploadTask uploadTask = _userImageReference.child('$filename.jpg').putFile(file);
     final StorageTaskSnapshot downloadUrl = (await uploadTask.onComplete);
     final String url = (await downloadUrl.ref.getDownloadURL());
     print(url);

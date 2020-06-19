@@ -5,6 +5,7 @@ final Firestore _db = Firestore.instance;
 final usersRef = _db.collection('users');
 final chatsRef = _db.collection('chats');
 
+final defaultImage = 'https://firebasestorage.googleapis.com/v0/b/fir-buddylang.appspot.com/o/userImages%2Fuser_default.png?alt=media&token=209e897d-ab1e-41c6-9ebb-d90c94a6581d';
 
 final kHintTextStyle = TextStyle(
   color: Colors.white54,

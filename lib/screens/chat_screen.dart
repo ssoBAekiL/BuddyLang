@@ -1,6 +1,7 @@
+import 'package:buddylang/utilities/constants.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:buddylang/models/bubble.dart';
 import 'package:buddylang/models/chat.dart';
 import 'package:buddylang/models/message.dart';
@@ -13,18 +14,11 @@ class ChatInstance extends StatefulWidget {
 }
 
 class _ChatInstanceState extends State<ChatInstance> {
-  final String uid = User.uid;
-
   final DatabaseService database = DatabaseService();
-
   final TextEditingController _textController = TextEditingController();
-
   Chat chat;
-
   ScrollController controller = new ScrollController(initialScrollOffset: 45.0);
-
   User receiver;
-  //String receiver;
 
   @override
   Widget build(BuildContext context) {
@@ -39,14 +33,9 @@ class _ChatInstanceState extends State<ChatInstance> {
             return Scaffold(body: Center(child: CircularProgressIndicator()));
           else {
             chat = Chat.fromSnapshot(snapshot.data);
-            int receiverInt;
-            if (receiver == null)
-              chat.users[0] == uid ? receiverInt = 1 : receiverInt = 0;
-            /*chat.users[0] == uid
-                  ? receiver = chat.users[1]
-                  : receiver = chat.users[0];*/
             return StreamBuilder(
-              stream: DatabaseService().getUserStream(chat.users[receiverInt]),
+              stream: DatabaseService().getUserStream(
+                  chat.users[0] != User.uid ? chat.users[0] : chat.users[1]),
               builder: (context, snapshot) {
                 if (!snapshot.hasData)
                   return Scaffold(
@@ -55,8 +44,47 @@ class _ChatInstanceState extends State<ChatInstance> {
                 else {
                   receiver = User.fromSnapshot(snapshot.data);
                   return Scaffold(
-                      appBar:
-                          AppBar(title: Text(receiver.name), centerTitle: true),
+                      appBar: AppBar(
+                          title: Text(receiver.name,
+                              overflow: TextOverflow.fade,
+                              maxLines: 1,
+                              softWrap: false),
+                          centerTitle: true,
+                          backgroundColor: Colors.lightBlue[600],
+                          actions: <Widget>[
+                            Padding(
+                              padding:
+                                  const EdgeInsets.fromLTRB(0.0, 3.0, 3.0, 3.0),
+                              child: GestureDetector(
+                                onTap: () {
+                                  Navigator.popAndPushNamed(context, '/homeScreen');
+                                },
+                                child: SizedBox(
+                                  width: 50.0,
+                                  height: 50.0,
+                                  child: CachedNetworkImage(
+                                    imageUrl: receiver.profileImageUrl == null
+                                        ? defaultImage
+                                        : receiver.profileImageUrl,
+                                    imageBuilder: (context, imageProvider) =>
+                                        Container(
+                                            width: 30.0,
+                                            height: 30.0,
+                                            decoration: BoxDecoration(
+                                                color: Colors.white,
+                                                shape: BoxShape.circle,
+                                                image: DecorationImage(
+                                                    image: imageProvider,
+                                                    fit: BoxFit.cover))),
+                                    placeholder: (context, url) =>
+                                        CircularProgressIndicator(),
+                                    errorWidget: (context, url, error) =>
+                                        Icon(Icons.error),
+                                  ),
+                                ),
+                              ),
+                            )
+                          ]),
                       body: SafeArea(
                         child: GestureDetector(
                           onTap: () {
@@ -93,12 +121,12 @@ class _ChatInstanceState extends State<ChatInstance> {
                                         return Column(children: <Widget>[
                                           Bubble.dateBubble(messageDate),
                                           Bubble.fromMessage(
-                                              chat, index, uid, true)
+                                              chat, index, User.uid, true)
                                         ]);
                                       }
 
                                       return Bubble.fromMessage(
-                                          chat, index, uid, false);
+                                          chat, index, User.uid, false);
                                     }),
                               ),
                               Padding(
@@ -125,7 +153,7 @@ class _ChatInstanceState extends State<ChatInstance> {
                                     onPressed: () {
                                       if (_textController.text != "") {
                                         chat.sendMessage(Message(
-                                            uid, _textController.text,
+                                            User.uid, _textController.text,
                                             timeStamp: DateTime.now()
                                                 .millisecondsSinceEpoch));
                                         _textController.clear();

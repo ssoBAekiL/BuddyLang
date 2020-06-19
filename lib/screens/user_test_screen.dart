@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:buddylang/services/auth_service.dart';
 import 'package:buddylang/services/database.dart';
 import 'package:buddylang/services/storage.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -33,7 +32,6 @@ class _UserTestScreenState extends State<UserTestScreen> {
 
   @override
   Widget build(BuildContext context) {
-    AuthService().getUid().then((u) => uid = u);
     return StreamBuilder(
           stream: DatabaseService().getUserStream(uid),
           builder: (context, snapshot) {
@@ -61,7 +59,11 @@ class _UserTestScreenState extends State<UserTestScreen> {
                   )
                 )
               ),
-            placeholder: (context, url) => CircularProgressIndicator(),
+            placeholder: (context, url) => SizedBox(
+              width: 80.0,
+              height: 80.0,
+              child: CircularProgressIndicator()
+              ),
             errorWidget: (context, url, error) => Icon(Icons.error),
             ),
             Text(user.toString()),
