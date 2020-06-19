@@ -48,10 +48,11 @@ class _HomeScreenState extends State<HomeScreen> {
 
 
   Future<void> _pickImage(ImageSource source, BuildContext context) async {
-    File selected = await ImagePicker.pickImage(source: source);
+    PickedFile selected = await ImagePicker().getImage(source: source);
+    File image = File(selected.path);
 
     setState(() {
-      _imageFile = selected;
+      _imageFile = image;
       StorageService.uploadUserImage(_imageFile, user.reference.documentID)
           .then((url) => user.update(newProfileImageUrl: url));
     });
