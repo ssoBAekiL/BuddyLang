@@ -51,4 +51,8 @@ class DatabaseService {
   saveMessage(Chat chat) async {
     await chatsCollectionRefernece.document(chat.reference.documentID).updateData(chat.toJson());
   }
+
+  Future<QuerySnapshot> getNewBuddy(String language) {
+    return usersCollectionRefernece.where('languages', arrayContains: language).getDocuments();
+  }
 }

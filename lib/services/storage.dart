@@ -5,6 +5,7 @@
 /******************************/
 
 import 'dart:io';
+import 'package:buddylang/models/user.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
 
@@ -19,15 +20,15 @@ class StorageService {
   /*  Function that receives a File object and a filename and calls the     */
   /*  function that uploads to the firebase storage profile images folder.  */
   /*  After the upload is completed waits and returns the image's url       */
-  static Future<String> uploadUserImage(File file, String filename) async {
-    return await _uploadImage(file, filename, _userImageReference);
+  static void uploadUserImage(File file, String filename, User u) async {
+    await _uploadImage(file, filename, _userImageReference).then((url) => u.update(newProfileImageUrl: url));
   }
 
   /*  Function that receives a File object and a filename and calls the function  */
   /*  that uploads to the firebase storage user's background images folder.       */
   /*  After the upload is completed waits and returns the image's url             */
-  static Future<String> uploadUserBackgroundImage(File file, String filename) async {
-    return await _uploadImage(file, filename, _userBackgroundImageReference);
+  static void uploadUserBackgroundImage(File file, String filename, User u) async {
+    await _uploadImage(file, filename, _userBackgroundImageReference).then((url) => u.update(newBackgroundImageUrl: url));
   }
 
   /*  Function that given a StorageReference actually takes care of uploading any image */

@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:buddylang/models/user.dart';
 import 'package:buddylang/services/auth_service.dart';
 import 'package:buddylang/services/database.dart';
@@ -15,46 +14,74 @@ class HomeScreen extends StatefulWidget {
   _HomeScreenState createState() => _HomeScreenState();
 }
 
-File _imageFile;
 User user;
 
 class _HomeScreenState extends State<HomeScreen> {
-  Future<void> _showChoiceDialog(BuildContext context) {
-    return showDialog(context: context, builder: (BuildContext context) {
-      return AlertDialog(
-        title: Text('Choose source'),
-        content:  SingleChildScrollView(
-          child: ListBody(
-            children: <Widget>[
-              Divider(thickness: 2.0),
-              Padding(padding: EdgeInsets.all(5.0)),
-              GestureDetector(
-                child: Text('Gallery'),
-                onTap: () {_pickImage(ImageSource.gallery, context);}
-              ),
-              Padding(padding: EdgeInsets.all(5.0)),
-              Divider(),
-              Padding(padding: EdgeInsets.all(5.0)),
-              GestureDetector(
-                child: Text('Camera'),
-                onTap: () {_pickImage(ImageSource.camera, context);}
-              )
-            ],
-          )
-        ),
-      );
-    });
+  Future<void> _showChoiceDialog(BuildContext context, bool profileImage) {
+    return showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Choose source'),
+            content: SingleChildScrollView(
+                child: ListBody(
+              children: <Widget>[
+                GestureDetector(
+                    child: Row(
+                      children: <Widget>[
+                        Icon(Icons.insert_photo, color: Colors.grey),
+                        SizedBox(width: 8.0),
+                        Text('Gallery'),
+                      ],
+                    ),
+                    onTap: () {
+                      if (profileImage)
+                        _pickImage(ImageSource.gallery, context, (File f) {
+                          StorageService.uploadUserImage(
+                              f, user.reference.documentID, user);
+                        });
+                      else
+                        _pickImage(ImageSource.gallery, context, (File f) {
+                          StorageService.uploadUserBackgroundImage(
+                              f, user.reference.documentID, user);
+                        });
+                    }),
+                SizedBox(width: 6.0),
+                Divider(),
+                SizedBox(width: 6.0),
+                GestureDetector(
+                    child: Row(
+                      children: <Widget>[
+                        Icon(Icons.photo_camera, color: Colors.grey),
+                        SizedBox(width: 8.0),
+                        Text('Camera'),
+                      ],
+                    ),
+                    onTap: () {
+                      if (profileImage)
+                        _pickImage(ImageSource.camera, context, (File f) {
+                          StorageService.uploadUserImage(
+                              f, user.reference.documentID, user);
+                        });
+                      else
+                        _pickImage(ImageSource.camera, context, (File f) {
+                          StorageService.uploadUserBackgroundImage(
+                              f, user.reference.documentID, user);
+                        });
+                    })
+              ],
+            )),
+          );
+        });
   }
 
-
-  Future<void> _pickImage(ImageSource source, BuildContext context) async {
+  Future<void> _pickImage(ImageSource source, BuildContext context,
+      Function(File f) uploader) async {
     PickedFile selected = await ImagePicker().getImage(source: source);
     File image = File(selected.path);
 
     setState(() {
-      _imageFile = image;
-      StorageService.uploadUserImage(_imageFile, user.reference.documentID)
-          .then((url) => user.update(newProfileImageUrl: url));
+      uploader(image);
     });
 
     Navigator.of(context).pop();
@@ -96,6 +123,30 @@ class _HomeScreenState extends State<HomeScreen> {
                         children: <Widget>[
                           SizedBox(height: 60.0),
                           SizedBox(
+                            width: 120.0,
+                            height: 60.0,
+                            child: CachedNetworkImage(
+                              imageUrl: user.backgroundImageUrl == null
+                                  ? defaultBackgroundImage
+                                  : user.backgroundImageUrl,
+                              imageBuilder: (context, imageProvider) =>
+                                  Container(
+                                      width: 120.0,
+                                      height: 60.0,
+                                      decoration: BoxDecoration(
+                                          shape: BoxShape.rectangle,
+                                          image: DecorationImage(
+                                              image: imageProvider,
+                                              fit: BoxFit.cover))),
+                              placeholder: (context, url) => SizedBox(
+                                  width: 80.0,
+                                  height: 80.0,
+                                  child: CircularProgressIndicator()),
+                              errorWidget: (context, url, error) =>
+                                  Icon(Icons.error),
+                            ),
+                          ),
+                          SizedBox(
                             width: 80.0,
                             height: 80.0,
                             child: CachedNetworkImage(
@@ -122,9 +173,14 @@ class _HomeScreenState extends State<HomeScreen> {
                           Text(user.toString()),
                           RaisedButton(
                               onPressed: () {
-                                _showChoiceDialog(context);
+                                _showChoiceDialog(context, true);
                               },
-                              child: Text('Select')),
+                              child: Text('Select profile picture')),
+                          RaisedButton(
+                              onPressed: () {
+                                _showChoiceDialog(context, false);
+                              },
+                              child: Text('Select background image')),
                           RaisedButton(
                               onPressed: () {
                                 AuthService().signOut();

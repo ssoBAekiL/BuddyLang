@@ -294,9 +294,9 @@ class BubbleClipper extends CustomClipper<Path> {
 
 class Bubble extends StatelessWidget {
 
-  /*************************************************/
+  ///***********************************************/
   /*  factory method added by Pablo Borrelli       */
-  /*************************************************/
+  ///***********************************************/
   /*  This factory method has been added to enable */
   /*  the external class to render easily date     */
   /*  widgets from the data in our application     */
@@ -311,9 +311,9 @@ class Bubble extends StatelessWidget {
     );
   }
 
-  /*************************************************/
+  ///***********************************************/
   /*  factory method added by Pablo Borrelli       */
-  /*************************************************/
+  ///***********************************************/
   /*  This factory method has been added to enable */
   /*  the external class to render easily message  */
   /*  widgets from the data in our application     */
@@ -327,15 +327,15 @@ class Bubble extends StatelessWidget {
 
     // gets values for the booleans 
     message.author == uid ? isOwn = true : isOwn = false;
-    if (messageIndex > 0 &&
-        message.author == chat.messages[messageIndex - 1].author)
+    if (messageIndex < chat.messages.length - 1 &&
+        message.author == chat.messages[messageIndex + 1].author)
       isReply = false;
 
     if ((isOwn && isReply) || (isOwn && isNewDay))
       // returns a blue bubble centered in the right part of the screen
       // and with a nip oriented to the right
       return Bubble(
-          margin: BubbleEdges.only(top: 10, left: 40, right: 10),
+          margin: BubbleEdges.only(top: 5, left: 40, right: 10, bottom: 3),
           radius: Radius.circular(15.0),
           nipWidth: 20,
           nipRadius: 3.0,
@@ -347,7 +347,7 @@ class Bubble extends StatelessWidget {
       // returns a blue bubble centered in the right part of the screen
       // and without a nip
       return Bubble(
-          margin: BubbleEdges.only(top: 3, left: 40, right: 10),
+          margin: BubbleEdges.only(bottom: 3, left: 40, right: 14),
           radius: Radius.circular(15.0),
           alignment: Alignment.topRight,
           nip: BubbleNip.no,
@@ -357,7 +357,7 @@ class Bubble extends StatelessWidget {
       // returns a light grey bubble centered in the left part of the screen
       // and with a nip oriented to the left
       return Bubble(
-          margin: BubbleEdges.only(top: 10, right: 40, left: 10),
+          margin: BubbleEdges.only(top: 5, right: 40, left: 10, bottom: 3),
           radius: Radius.circular(15.0),
           nipWidth: 20,
           nipRadius: 3.0,
@@ -369,7 +369,7 @@ class Bubble extends StatelessWidget {
       // returns a grey bubble centered in the right part of the screen
       // and without a nip
       return Bubble(
-          margin: BubbleEdges.only(top: 3, right: 40, left: 10),
+          margin: BubbleEdges.only(bottom: 3, right: 40, left: 14),
           radius: Radius.circular(15.0),
           alignment: Alignment.topLeft,
           nip: BubbleNip.no,

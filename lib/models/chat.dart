@@ -6,7 +6,6 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:buddylang/services/database.dart';
-import 'package:buddylang/models/user.dart';
 import 'package:buddylang/models/message.dart';
 
 

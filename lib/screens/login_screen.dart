@@ -1,11 +1,8 @@
-import 'package:buddylang/screens/initial_screen.dart';
 import 'package:buddylang/services/auth_service.dart';
 import 'package:buddylang/utilities/constants.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-
 import 'package:provider/provider.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -21,6 +18,14 @@ class _LoginScreenState extends State<LoginScreen> {
   final _signupFormKey = GlobalKey<FormState>();
   String _name, _email, _password;
   int _selectedIndex = 0;
+
+  @override
+  void initState() { 
+    super.initState();
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+  ]);
+  }
 
   _buildLoginForm() {
     return Form(

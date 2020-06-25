@@ -1,10 +1,12 @@
 import 'package:buddylang/screens/home_screen.dart';
 import 'package:buddylang/screens/login_screen.dart';
+import 'package:buddylang/screens/new_buddy_screen.dart';
 import 'package:buddylang/screens/user_test_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:buddylang/screens/chat_screen.dart';
 import 'package:buddylang/screens/conversations_screen.dart';
 import 'package:buddylang/screens/initial_screen.dart';
+import 'package:flutter/services.dart';
 
 void main() => runApp(MaterialApp(
   title: 'BuddyLang',
@@ -16,9 +18,10 @@ void main() => runApp(MaterialApp(
   routes: {
     '/chatScreen': (context) => ChatInstance(), // Screen where the messages of a conversation are displayed
     '/conversationsScreen': (context) => ConversationsScreen(), // Screen where the list of conversations of the user are displayed
-    '/userTestScreen': (context) => UserTestScreen(),
+    //'/userTestScreen': (context) => UserTestScreen(),
     '/loginScreen': (context) => LoginScreen(),
     '/homeScreen': (context) => HomeScreen(),
-    '/preLogin': (context) => PreLogin()
+    '/preLogin': (context) => PreLogin(),
+    '/newBuddyScreen': (context) => NewBuddyScreen(),
   }
 ));

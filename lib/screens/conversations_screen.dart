@@ -29,104 +29,113 @@ class _ConversationsScreenState extends State<ConversationsScreen> {
             else {
               user = User.fromSnapshot(snapshot.data);
               return Scaffold(
-                  appBar: AppBar(
-                      title: Text('BuddyLang'),
-                      centerTitle: true,
-                      backgroundColor: Colors.lightBlue[600],
-                      actions: <Widget>[
-                        Padding(
+                appBar: AppBar(
+                    title: Text('BuddyLang'),
+                    centerTitle: true,
+                    backgroundColor: Colors.lightBlue[600],
+                    actions: <Widget>[
+                      Padding(
                           padding: EdgeInsets.only(right: 20.0),
                           child: GestureDetector(
-                            onTap: () {print('AAA');},
+                            onTap: () {
+                              Navigator.pushNamed(context, '/newBuddyScreen');
+                            },
                             child: Icon(
                               Icons.add,
                               size: 26.0,
                             ),
-                          )
-                        )
-                      ]
-                    ),
-                  backgroundColor: Colors.grey[200],
-                  body: FutureBuilder<List<String>>(
-                      future: user.sortChat(),
-                      builder: (BuildContext context,
-                          AsyncSnapshot<List<String>> listSnapshot) {
-                        if (!listSnapshot.hasData) {
-                          // while data is loading:
-                          if (user.chats != null)
-                            return Center(
-                              child: CircularProgressIndicator(),
-                            );
-                          else
-                            return Center(
-                                child: Text(
-                              "You dont have any active chat",
-                              style: TextStyle(
-                                  fontSize: 25.0, color: Colors.grey[600]),
-                            ));
-                        } else {
-                          List<String> sortedChats = listSnapshot.data;
-                          return ListView.builder(
-                              itemCount: sortedChats.length,
-                              itemBuilder: (BuildContext ctxt, int index) {
-                                return StreamBuilder(
-                                    stream: DatabaseService()
-                                        .getStream(sortedChats[index]),
-                                    builder: (context, snapshot) {
-                                      if (!snapshot.hasData)
-                                        return Center(
-                                            child: CircularProgressIndicator());
-                                      else {
-                                        user.sortChat();
-                                        Chat chat =
-                                            Chat.fromSnapshot(snapshot.data);
-                                        int receiverInt;
-                                        chat.users[0] ==
-                                                user.reference.documentID
-                                            ? receiverInt = 1
-                                            : receiverInt = 0;
-                                        /*chat.users[0] == user.reference.documentID
+                          ))
+                    ]),
+                backgroundColor: Colors.grey[200],
+                body: FutureBuilder<List<String>>(
+                    future: user.sortChat(),
+                    builder: (BuildContext context,
+                        AsyncSnapshot<List<String>> listSnapshot) {
+                      if (!listSnapshot.hasData) {
+                        // while data is loading:
+                        if (user.chats != null)
+                          return Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        else
+                          return Center(
+                              child: Text(
+                            "You dont have any active chat",
+                            style: TextStyle(
+                                fontSize: 25.0, color: Colors.grey[600]),
+                          ));
+                      } else {
+                        List<String> sortedChats = listSnapshot.data;
+                        return ListView.builder(
+                            itemCount: sortedChats.length,
+                            itemBuilder: (BuildContext ctxt, int index) {
+                              return StreamBuilder(
+                                  stream: DatabaseService()
+                                      .getStream(sortedChats[index]),
+                                  builder: (context, snapshot) {
+                                    if (!snapshot.hasData)
+                                      return Center(
+                                          child: CircularProgressIndicator());
+                                    else {
+                                      user.sortChat();
+                                      Chat chat =
+                                          Chat.fromSnapshot(snapshot.data);
+                                      int receiverInt;
+                                      chat.users[0] == user.reference.documentID
+                                          ? receiverInt = 1
+                                          : receiverInt = 0;
+                                      /*chat.users[0] == user.reference.documentID
                             ? receiver = chat.users[1]
                             : receiver = chat.users[0];*/
-                                        int lastMessageDate;
-                                        String lastMessage;
-                                        if (chat.messages.length > 0) {
-                                          lastMessage = chat
-                                              .messages[
-                                                  chat.messages.length - 1]
-                                              .message;
-                                          lastMessageDate = chat
-                                              .messages[
-                                                  chat.messages.length - 1]
-                                              .timeStamp;
-                                        } else
-                                          lastMessage = 'New conversation!';
-                                        return StreamBuilder(
-                                            stream: DatabaseService()
-                                                .getUserStream(
-                                                    chat.users[receiverInt]),
-                                            builder: (context, snapshot) {
-                                              if (!snapshot.hasData)
-                                                return Container(
-                                                  height: MediaQuery.of(context).size.height,
-                                                  child: Scaffold(
-                                                    body: Center(
-                                                    child: CircularProgressIndicator()),
-                                                  ),
-                                                );
-                                              else {
-                                                receiver = User.fromSnapshot(
-                                                    snapshot.data);
-                                                return MessageEntry(
-                                                    receiver, lastMessage, lastMessageDate,
-                                                    chat.reference.documentID);
-                                              }
-                                            });
-                                      }
-                                    });
-                              });
-                        }
-                      }));
+                                      int lastMessageDate;
+                                      String lastMessage;
+                                      if (chat.messages.length > 0) {
+                                        lastMessage = chat
+                                            .messages[chat.messages.length - 1]
+                                            .message;
+                                        lastMessageDate = chat
+                                            .messages[chat.messages.length - 1]
+                                            .timeStamp;
+                                      } else
+                                        lastMessage = 'New conversation!';
+                                      return StreamBuilder(
+                                          stream: DatabaseService()
+                                              .getUserStream(
+                                                  chat.users[receiverInt]),
+                                          builder: (context, snapshot) {
+                                            if (!snapshot.hasData)
+                                              return Container(
+                                                height: MediaQuery.of(context)
+                                                    .size
+                                                    .height,
+                                                child: Scaffold(
+                                                  body: Center(
+                                                      child:
+                                                          CircularProgressIndicator()),
+                                                ),
+                                              );
+                                            else {
+                                              receiver = User.fromSnapshot(
+                                                  snapshot.data);
+                                              return MessageEntry(
+                                                  receiver,
+                                                  lastMessage,
+                                                  lastMessageDate,
+                                                  chat.reference.documentID);
+                                            }
+                                          });
+                                    }
+                                  });
+                            });
+                      }
+                    }),
+                floatingActionButton: FloatingActionButton(
+                    elevation: 10.0,
+                    child: Icon(Icons.add),
+                    onPressed: () {
+                      Navigator.pushNamed(context, '/newBuddyScreen');
+                    }),
+              );
             }
           });
     });

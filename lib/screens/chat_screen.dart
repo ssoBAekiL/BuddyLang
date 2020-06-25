@@ -1,5 +1,6 @@
 import 'package:buddylang/utilities/constants.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:buddylang/models/bubble.dart';
@@ -17,8 +18,25 @@ class _ChatInstanceState extends State<ChatInstance> {
   final DatabaseService database = DatabaseService();
   final TextEditingController _textController = TextEditingController();
   Chat chat;
-  ScrollController controller = new ScrollController(initialScrollOffset: 45.0);
+  ScrollController _controller = new ScrollController();
   User receiver;
+
+  void _sendMessage() {
+    if (_textController.text != "") {
+      chat.messages = chat.messages.reversed.toList();
+      chat.sendMessage(Message(User.uid, _textController.text,
+          timeStamp: DateTime.now().millisecondsSinceEpoch));
+      _textController.clear();
+    }
+    FocusScope.of(context).requestFocus(new FocusNode());
+    _scrollToBottom();
+  }
+
+  void _scrollToBottom() => _controller.animateTo(
+        0.0,
+        curve: Curves.easeOut,
+        duration: const Duration(milliseconds: 300),
+      );
 
   @override
   Widget build(BuildContext context) {
@@ -33,6 +51,7 @@ class _ChatInstanceState extends State<ChatInstance> {
             return Scaffold(body: Center(child: CircularProgressIndicator()));
           else {
             chat = Chat.fromSnapshot(snapshot.data);
+            chat.messages = chat.messages.reversed.toList();
             return StreamBuilder(
               stream: DatabaseService().getUserStream(
                   chat.users[0] != User.uid ? chat.users[0] : chat.users[1]),
@@ -54,10 +73,11 @@ class _ChatInstanceState extends State<ChatInstance> {
                           actions: <Widget>[
                             Padding(
                               padding:
-                                  const EdgeInsets.fromLTRB(0.0, 3.0, 3.0, 3.0),
+                                  const EdgeInsets.fromLTRB(0.0, 5.0, 5.0, 5.0),
                               child: GestureDetector(
                                 onTap: () {
-                                  Navigator.popAndPushNamed(context, '/homeScreen');
+                                  Navigator.popAndPushNamed(
+                                      context, '/homeScreen');
                                 },
                                 child: SizedBox(
                                   width: 50.0,
@@ -85,6 +105,7 @@ class _ChatInstanceState extends State<ChatInstance> {
                               ),
                             )
                           ]),
+                      resizeToAvoidBottomInset: true,
                       body: SafeArea(
                         child: GestureDetector(
                           onTap: () {
@@ -96,23 +117,24 @@ class _ChatInstanceState extends State<ChatInstance> {
                             children: <Widget>[
                               Flexible(
                                 child: ListView.builder(
-                                    controller: controller,
+                                    reverse: true,
+                                    shrinkWrap: true,
+                                    controller: _controller,
                                     itemCount: chat.messages.length,
                                     itemBuilder:
                                         (BuildContext ctxt, int index) {
                                       DateTime previousMessageDate =
                                           DateTime.now();
-                                      if (index > 0)
+                                      if (index < chat.messages.length - 1)
                                         previousMessageDate =
                                             DateTime.fromMillisecondsSinceEpoch(
-                                                chat.messages[index - 1]
+                                                chat.messages[index + 1]
                                                     .timeStamp);
 
                                       DateTime messageDate =
                                           DateTime.fromMillisecondsSinceEpoch(
                                               chat.messages[index].timeStamp);
-                                      if (index == 0 ||
-                                          messageDate.day !=
+                                      if (messageDate.day !=
                                               previousMessageDate.day ||
                                           messageDate.month !=
                                               previousMessageDate.month ||
@@ -124,47 +146,67 @@ class _ChatInstanceState extends State<ChatInstance> {
                                               chat, index, User.uid, true)
                                         ]);
                                       }
-
                                       return Bubble.fromMessage(
                                           chat, index, User.uid, false);
                                     }),
                               ),
-                              Padding(
-                                padding: const EdgeInsets.fromLTRB(
-                                    10.0, 0.0, 10.0, 0.0),
-                                child: Row(children: <Widget>[
-                                  Flexible(
-                                    child: TextField(
-                                      controller: _textController,
-                                      keyboardType: TextInputType.multiline,
-                                      minLines: 1,
-                                      maxLines: 5,
-                                      decoration: InputDecoration(
-                                          hintText: 'Type a message'),
-                                    ),
+                              Container(
+                                color: Colors.grey[300],
+                                child: Padding(
+                                  padding: const EdgeInsets.fromLTRB(
+                                      10.0, 6.0, 10.0, 6.0),
+                                  child: Container(
+                                    child: Row(children: <Widget>[
+                                      Flexible(
+                                        child: TextField(
+                                          controller: _textController,
+                                          keyboardType: TextInputType.multiline,
+                                          textInputAction: TextInputAction.send,
+                                          onSubmitted: (value) {
+                                            _sendMessage();
+                                          },
+                                          textCapitalization:
+                                              TextCapitalization.sentences,
+                                          minLines: 1,
+                                          maxLines: 5,
+                                          decoration: InputDecoration(
+                                            hintText: 'Send a message...',
+                                            contentPadding:
+                                                const EdgeInsets.fromLTRB(
+                                                    10.0, 0.0, 6.0, 0.0),
+                                            filled: true,
+                                            fillColor: Colors.white,
+                                            enabledBorder: OutlineInputBorder(
+                                              borderRadius: BorderRadius.all(
+                                                  Radius.circular(15.0)),
+                                              borderSide: BorderSide(
+                                                  color: Colors.white),
+                                            ),
+                                            focusedBorder: OutlineInputBorder(
+                                              borderRadius: BorderRadius.all(
+                                                  Radius.circular(15.0)),
+                                              borderSide: BorderSide(
+                                                  color: Colors.white),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      SizedBox(width: 10.0),
+                                      RaisedButton(
+                                        color: Colors.lightBlue,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              new BorderRadius.circular(18.0),
+                                        ),
+                                        onPressed: () {
+                                          _sendMessage();
+                                        },
+                                        child: Icon(Icons.send,
+                                            color: Colors.white),
+                                      )
+                                    ]),
                                   ),
-                                  SizedBox(width: 10.0),
-                                  RaisedButton(
-                                    color: Colors.lightBlue,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius:
-                                          new BorderRadius.circular(18.0),
-                                    ),
-                                    onPressed: () {
-                                      if (_textController.text != "") {
-                                        chat.sendMessage(Message(
-                                            User.uid, _textController.text,
-                                            timeStamp: DateTime.now()
-                                                .millisecondsSinceEpoch));
-                                        _textController.clear();
-                                      }
-                                      FocusScope.of(context)
-                                          .requestFocus(new FocusNode());
-                                    },
-                                    child:
-                                        Icon(Icons.send, color: Colors.white),
-                                  )
-                                ]),
+                                ),
                               )
                             ],
                           ),

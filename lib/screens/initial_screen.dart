@@ -29,7 +29,7 @@ class UserVerification extends StatelessWidget {
       builder: (BuildContext context, AsyncSnapshot snapshot) {
         if (snapshot.hasData) {
           User.uid = snapshot.data.uid;
-          return HomeScreen();
+          return ConversationsScreen(); //HomeScreen();
         } else {
           return LoginScreen();
         }

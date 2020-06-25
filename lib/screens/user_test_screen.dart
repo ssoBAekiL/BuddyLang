@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:buddylang/models/user.dart';
 import 'package:image_picker/image_picker.dart';
 
-class UserTestScreen extends StatefulWidget {
+/*class UserTestScreen extends StatefulWidget {
   @override
   _UserTestScreenState createState() => _UserTestScreenState();
 }
@@ -78,3 +78,4 @@ class _UserTestScreenState extends State<UserTestScreen> {
   });
   }
 }
+*/
