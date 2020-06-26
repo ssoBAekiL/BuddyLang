@@ -10,6 +10,7 @@ import 'package:buddylang/models/chat.dart';
 
 class User {
   static String uid;
+  int lastRead;
   String token = '';
   String bio = '';
   String profileImageUrl = '';
@@ -26,7 +27,7 @@ class User {
   /*  Constructor of the User object, only name parameter is mandatory      */
   /*  since when a new user registers a first insance of the user is saved  */
   /*  in the databes only with that information                             */
-  User(this.name, {this.token, this.bio, this.chats, this.reference, this.birthDate, this.livingCountry, this.interests, this.languages, this.profileImageUrl, this.backgroundImageUrl});
+  User(this.name, {this.token, this.bio, this.chats, this.reference, this.birthDate, this.livingCountry, this.interests, this.languages, this.profileImageUrl, this.backgroundImageUrl, this.lastRead});
 
   /*  factory that buids a User object from the */
   /*  json data returned by Firestore           */
@@ -63,7 +64,7 @@ class User {
   
   /*  Function that works as a setter for every variable in the class but also  */
   /*  updates the information in the database                                   */
-  void update({String newToken, String newProfileImageUrl, String newBackgroundImageUrl, String newBio, String newName, int newBirthDate, String newLivingCountry, List<String> newInterests, List<String> newLanguages, List<String> newChats}) {
+  void update({String newToken, String newProfileImageUrl, String newBackgroundImageUrl, String newBio, String newName, int newBirthDate, String newLivingCountry, List<String> newInterests, List<String> newLanguages, List<String> newChats, int newLastRead}) {
     if (newToken != null)
       this.token = newToken;
     if (newProfileImageUrl != null)
@@ -84,6 +85,8 @@ class User {
       this.languages = newLanguages;
     if (newChats != null)
       this.chats = newChats;
+    if (newLastRead != null)
+      this.lastRead = newLastRead;
     //  Saves changes on the firebase database
     DatabaseService().updateUser(this);
   }
@@ -139,7 +142,8 @@ User _userFromJson(Map<dynamic, dynamic> json) {
     languages: _convertLanguages(json['languages'] as List),
     chats: _convertChats(json['chats'] as List),
     profileImageUrl: json['profileImageUrl'] as String,
-    backgroundImageUrl: json['backgroundImageUrl'] as String
+    backgroundImageUrl: json['backgroundImageUrl'] as String,
+    lastRead: json['lastRead'] as int
     );
 }
 
@@ -195,5 +199,6 @@ Map<String, dynamic> _userToJson(User instance) =>
     'languages': instance.languages,
     'chats': instance.chats,
     'profileImageUrl': instance.profileImageUrl,
-    'backgroundImageUrl': instance.backgroundImageUrl
+    'backgroundImageUrl': instance.backgroundImageUrl,
+    'lastRead': instance.lastRead
   };

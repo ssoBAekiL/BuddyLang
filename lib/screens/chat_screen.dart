@@ -37,7 +37,7 @@ class _ChatInstanceState extends State<ChatInstance> {
         curve: Curves.easeOut,
         duration: const Duration(milliseconds: 300),
       );
-
+  
   @override
   Widget build(BuildContext context) {
     Map args = ModalRoute.of(context).settings.arguments;
@@ -52,6 +52,8 @@ class _ChatInstanceState extends State<ChatInstance> {
           else {
             chat = Chat.fromSnapshot(snapshot.data);
             chat.messages = chat.messages.reversed.toList();
+            ///////////////////////////////////
+            print(chat.messages[0].timeStamp);
             return StreamBuilder(
               stream: DatabaseService().getUserStream(
                   chat.users[0] != User.uid ? chat.users[0] : chat.users[1]),
@@ -104,7 +106,8 @@ class _ChatInstanceState extends State<ChatInstance> {
                                 ),
                               ),
                             )
-                          ]),
+                          ]
+                        ),
                       resizeToAvoidBottomInset: true,
                       body: SafeArea(
                         child: GestureDetector(
@@ -130,7 +133,6 @@ class _ChatInstanceState extends State<ChatInstance> {
                                             DateTime.fromMillisecondsSinceEpoch(
                                                 chat.messages[index + 1]
                                                     .timeStamp);
-
                                       DateTime messageDate =
                                           DateTime.fromMillisecondsSinceEpoch(
                                               chat.messages[index].timeStamp);

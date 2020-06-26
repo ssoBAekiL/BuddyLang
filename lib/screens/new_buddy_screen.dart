@@ -18,7 +18,6 @@ class _NewBuddyScreenState extends State<NewBuddyScreen> {
   String testText = '';
 
   void _searchBuddy(BuildContext context) {
-    String uid;
     if (_dropdownLanguage == null) {
       final snackBar =
           SnackBar(content: Text('Select the language you want to use'));
@@ -48,13 +47,19 @@ class _NewBuddyScreenState extends State<NewBuddyScreen> {
     User newBuddy;
     if (users.documents.isNotEmpty) {
       users.documents.forEach((u) => buddys.add(User.fromSnapshot(u)));
-      if (_dropdownInterest != null)
-        buddys.removeWhere(
-            (buddy) => buddy.interests.contains(_dropdownInterest) == false);
       buddys.removeWhere((buddy) => buddy.reference.documentID == User.uid);
+      if (buddys.length == 1)
+        newBuddy = buddys[0];
+      else if (_dropdownInterest != null) {
+        if (buddys.where((buddy) => buddy.interests.contains(_dropdownInterest)).toList().length > 0) {
+          buddys.removeWhere(
+            (buddy) => buddy.interests.contains(_dropdownInterest) == false);
+        }
+      }
       if (buddys.length > 1)
         newBuddy = buddys[Random().nextInt(buddys.length)];
-      else if (buddys.length == 1) newBuddy = buddys[0];
+      else newBuddy = buddys[0];
+
       setState(() {
         testText = newBuddy.toString();
       });
