@@ -122,28 +122,31 @@ class _HomeScreenState extends State<HomeScreen> {
                           child: Column(
                         children: <Widget>[
                           SizedBox(height: 60.0),
-                          SizedBox(
-                            width: 120.0,
-                            height: 60.0,
-                            child: CachedNetworkImage(
-                              imageUrl: user.backgroundImageUrl == null
-                                  ? defaultBackgroundImage
-                                  : user.backgroundImageUrl,
-                              imageBuilder: (context, imageProvider) =>
-                                  Container(
-                                      width: 120.0,
-                                      height: 60.0,
-                                      decoration: BoxDecoration(
-                                          shape: BoxShape.rectangle,
-                                          image: DecorationImage(
-                                              image: imageProvider,
-                                              fit: BoxFit.cover))),
-                              placeholder: (context, url) => SizedBox(
-                                  width: 80.0,
-                                  height: 80.0,
-                                  child: CircularProgressIndicator()),
-                              errorWidget: (context, url, error) =>
-                                  Icon(Icons.error),
+                          GestureDetector(
+                            onTap: () => _showChoiceDialog(context, false),
+                            child: SizedBox(
+                              width: 120.0,
+                              height: 60.0,
+                              child: CachedNetworkImage(
+                                imageUrl: user.backgroundImageUrl == null
+                                    ? defaultBackgroundImage
+                                    : user.backgroundImageUrl,
+                                imageBuilder: (context, imageProvider) =>
+                                    Container(
+                                        width: 120.0,
+                                        height: 60.0,
+                                        decoration: BoxDecoration(
+                                            shape: BoxShape.rectangle,
+                                            image: DecorationImage(
+                                                image: imageProvider,
+                                                fit: BoxFit.cover))),
+                                placeholder: (context, url) => SizedBox(
+                                    width: 80.0,
+                                    height: 80.0,
+                                    child: CircularProgressIndicator()),
+                                errorWidget: (context, url, error) =>
+                                    Icon(Icons.error),
+                              ),
                             ),
                           ),
                           SizedBox(

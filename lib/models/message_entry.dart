@@ -30,7 +30,7 @@ class _MessageEntryState extends State<MessageEntry> {
       child: Card(
         margin: EdgeInsets.fromLTRB(6.0, 6.0, 6.0, 0),
         child: Padding(
-          padding: const EdgeInsets.all(12.0),
+          padding: const EdgeInsets.all(10.0),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
@@ -53,12 +53,12 @@ class _MessageEntryState extends State<MessageEntry> {
                 ),
               ),
               SizedBox(width: 15.0),
-              Flexible(
+              Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Text(widget.receiver.name,
-                        overflow: TextOverflow.fade,
+                        overflow: TextOverflow.ellipsis,
                         maxLines: 1,
                         softWrap: false,
                         style: TextStyle(fontSize: 16.0, color: Colors.black)),
@@ -69,32 +69,36 @@ class _MessageEntryState extends State<MessageEntry> {
                   ],
                 ),
               ),
-              Spacer(flex: 2),
+              SizedBox(width: 10.0),
               widget.lastMessageDate == null
                   ? Text('')
                   : TimerBuilder.periodic(
                       Duration(seconds: 60), //updates every second
                       builder: (context) {
-                      return Column(
-                        children: <Widget>[
-                          Text(
-                              _lastTimeStamp(
-                                  DateTime.fromMillisecondsSinceEpoch(
-                                      widget.lastMessageDate)),
-                              style: TextStyle(
-                                  fontSize: 13.0, color: Colors.grey[700])),
-                          SizedBox(height: 10.0),
-                          Container(
-                              decoration: BoxDecoration(
-                                  shape: BoxShape.circle, color: Colors.green),
-                              child: Padding(
-                                padding: const EdgeInsets.all(4.0),
-                                child: Text(
-                                  '34',
-                                  style: TextStyle(color: Colors.white),
-                                ),
-                              ))
-                        ],
+                      return Align(
+                        alignment: Alignment.bottomCenter,
+                        child: Column(
+                          children: <Widget>[
+                            Text(
+                                _lastTimeStamp(
+                                    DateTime.fromMillisecondsSinceEpoch(
+                                        widget.lastMessageDate)),
+                                style: TextStyle(
+                                    fontSize: 13.0, color: Colors.grey[700])),
+                            SizedBox(height: 10.0),
+                            Container(
+                                decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: Colors.green),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(4.0),
+                                  child: Text(
+                                    '34',
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                ))
+                          ],
+                        ),
                       );
                     })
             ],

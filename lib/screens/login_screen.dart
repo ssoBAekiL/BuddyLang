@@ -1,16 +1,22 @@
+
+import 'package:buddylang/screens/home_screen.dart';
 import 'package:buddylang/services/auth_service.dart';
 import 'package:buddylang/utilities/constants.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+
 import 'package:provider/provider.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
   _LoginScreenState createState() => _LoginScreenState();
 
-  LoginScreen({this.auth});
+  LoginScreen({this.auth, this.onSignedIn});
   final BaseAuth auth;
+
+  final VoidCallback onSignedIn;
 }
 
 class _LoginScreenState extends State<LoginScreen> {
@@ -18,14 +24,6 @@ class _LoginScreenState extends State<LoginScreen> {
   final _signupFormKey = GlobalKey<FormState>();
   String _name, _email, _password;
   int _selectedIndex = 0;
-
-  @override
-  void initState() { 
-    super.initState();
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.portraitUp,
-  ]);
-  }
 
   _buildLoginForm() {
     return Form(
@@ -172,7 +170,7 @@ class _LoginScreenState extends State<LoginScreen> {
               hintStyle: kHintTextStyle,
             ),
             validator: (input) => input.length < 6
-                ? 'Password must contain least 6 characters'
+                ? 'La password deve essere di almeno 6 caratteri'
                 : null,
             onSaved: (input) => _password = input,
           ),
@@ -183,31 +181,19 @@ class _LoginScreenState extends State<LoginScreen> {
 
   _submit() async {
     final authService = Provider.of<AuthService>(context, listen: false);
-    //  final FirebaseAuth _auth = FirebaseAuth.instance;
-    // FirebaseUser user = await _auth.currentUser();
-    AsyncSnapshot snapshot;
+  //  final FirebaseAuth _auth = FirebaseAuth.instance;
+   // FirebaseUser user = await _auth.currentUser();
 
+  
     try {
       if (_selectedIndex == 0 && _loginFormKey.currentState.validate()) {
         _loginFormKey.currentState.save();
         await authService.login(_email, _password);
       } else if (_selectedIndex == 1 &&
           _signupFormKey.currentState.validate()) {
-        _signupFormKey.currentState.save();
-        await authService.signup(_name, _email, _password);
-        await _showVerifyEmailSentDialog();
-
-        if (snapshot.hasData)
-          return snapshot.data.isEmailVerified ? LoginScreen() : signOut();
-        else
-          return LoginScreen();
-
-        //authService.isEmailVerified();
-
-        // return LoginScreen();
-
-        //authService.sendEmailVerification();
-
+       _signupFormKey.currentState.save();
+       await authService.signup(_name, _email, _password);
+      await _showVerifyEmailSentDialog();
       }
     } on PlatformException catch (err) {
       _showErrorDialog(err.message);
@@ -224,6 +210,7 @@ class _LoginScreenState extends State<LoginScreen> {
           actions: <Widget>[
             FlatButton(
               child: Text('Ok'),
+              
               onPressed: () => Navigator.pop(context),
             ),
           ],
@@ -232,7 +219,7 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  signOut() {
+signOut() {
     final FirebaseAuth _auth = FirebaseAuth.instance;
     _auth.signOut();
     return Container(width: 0.0, height: 0.0);
@@ -246,12 +233,14 @@ class _LoginScreenState extends State<LoginScreen> {
         return AlertDialog(
           title: new Text("Verify your account"),
           content:
-              new Text("Link to verify account has been sent to your email."),
+              new Text("Link to verify account has been sent to your email"),
           actions: <Widget>[
             new FlatButton(
               child: new Text("Dismiss"),
               onPressed: () {
-                Navigator.of(context).pop();
+                
+               Navigator.of(context).pop();
+                
               },
             ),
           ],
@@ -267,8 +256,8 @@ class _LoginScreenState extends State<LoginScreen> {
         // return object of type Dialog
         return AlertDialog(
           title: new Text("Reset your Password"),
-          content: new Text(
-              "Link to verify reset your password has been sent to your email"),
+          content:
+              new Text("Link to verify reset your password has been sent to your email"),
           actions: <Widget>[
             new FlatButton(
               child: new Text("Dismiss"),
@@ -319,15 +308,18 @@ class _LoginScreenState extends State<LoginScreen> {
   }
   */
 
-  // bool _rememberMe = false;
+ // bool _rememberMe = false;
 
   _buildForgotPasswordBtn() {
     final authService = Provider.of<AuthService>(context, listen: false);
     return Container(
+      
       alignment: Alignment.centerRight,
       child: FlatButton(
-        onPressed: () {
+        
+        onPressed: (){
           authService.resetPassword(_email);
+        
         },
         padding: EdgeInsets.only(right: 0.0),
         child: Text(

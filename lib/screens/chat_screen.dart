@@ -37,7 +37,7 @@ class _ChatInstanceState extends State<ChatInstance> {
         curve: Curves.easeOut,
         duration: const Duration(milliseconds: 300),
       );
-  
+
   @override
   Widget build(BuildContext context) {
     Map args = ModalRoute.of(context).settings.arguments;
@@ -106,8 +106,7 @@ class _ChatInstanceState extends State<ChatInstance> {
                                 ),
                               ),
                             )
-                          ]
-                        ),
+                          ]),
                       resizeToAvoidBottomInset: true,
                       body: SafeArea(
                         child: GestureDetector(
@@ -116,6 +115,7 @@ class _ChatInstanceState extends State<ChatInstance> {
                                 .requestFocus(new FocusNode());
                           },
                           child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             mainAxisSize: MainAxisSize.max,
                             children: <Widget>[
                               Flexible(
@@ -152,61 +152,73 @@ class _ChatInstanceState extends State<ChatInstance> {
                                           chat, index, User.uid, false);
                                     }),
                               ),
-                              Container(
-                                color: Colors.grey[300],
-                                child: Padding(
-                                  padding: const EdgeInsets.fromLTRB(
-                                      10.0, 6.0, 10.0, 6.0),
-                                  child: Container(
-                                    child: Row(children: <Widget>[
-                                      Flexible(
-                                        child: TextField(
-                                          controller: _textController,
-                                          keyboardType: TextInputType.multiline,
-                                          textInputAction: TextInputAction.send,
-                                          onSubmitted: (value) {
-                                            _sendMessage();
-                                          },
-                                          textCapitalization:
-                                              TextCapitalization.sentences,
-                                          minLines: 1,
-                                          maxLines: 5,
-                                          decoration: InputDecoration(
-                                            hintText: 'Send a message...',
-                                            contentPadding:
-                                                const EdgeInsets.fromLTRB(
-                                                    10.0, 0.0, 6.0, 0.0),
-                                            filled: true,
-                                            fillColor: Colors.white,
-                                            enabledBorder: OutlineInputBorder(
-                                              borderRadius: BorderRadius.all(
-                                                  Radius.circular(15.0)),
-                                              borderSide: BorderSide(
-                                                  color: Colors.white),
-                                            ),
-                                            focusedBorder: OutlineInputBorder(
-                                              borderRadius: BorderRadius.all(
-                                                  Radius.circular(15.0)),
-                                              borderSide: BorderSide(
-                                                  color: Colors.white),
+                              Align(
+                                alignment: Alignment.bottomCenter,
+                                child: Container(
+                                  color: Colors.grey[300],
+                                  child: Padding(
+                                    padding: const EdgeInsets.fromLTRB(
+                                        10.0, 6.0, 10.0, 6.0),
+                                    child: Container(
+                                      child: Row(children: <Widget>[
+                                        Flexible(
+                                          child: TextField(
+                                            controller: _textController,
+                                            keyboardType:
+                                                TextInputType.multiline,
+                                            textInputAction:
+                                                TextInputAction.send,
+                                            onSubmitted: (value) {
+                                              _sendMessage();
+                                            },
+                                            textCapitalization:
+                                                TextCapitalization.sentences,
+                                            minLines: 1,
+                                            maxLines: 5,
+                                            decoration: InputDecoration(
+                                              hintText: 'Send a message...',
+                                              contentPadding:
+                                                  const EdgeInsets.fromLTRB(
+                                                      10.0, 0.0, 6.0, 0.0),
+                                              filled: true,
+                                              fillColor: Colors.white,
+                                              enabledBorder:
+                                                  OutlineInputBorder(
+                                                borderRadius:
+                                                    BorderRadius.all(
+                                                        Radius.circular(
+                                                            15.0)),
+                                                borderSide: BorderSide(
+                                                    color: Colors.white),
+                                              ),
+                                              focusedBorder:
+                                                  OutlineInputBorder(
+                                                borderRadius:
+                                                    BorderRadius.all(
+                                                        Radius.circular(
+                                                            15.0)),
+                                                borderSide: BorderSide(
+                                                    color: Colors.white),
+                                              ),
                                             ),
                                           ),
                                         ),
-                                      ),
-                                      SizedBox(width: 10.0),
-                                      RaisedButton(
-                                        color: Colors.lightBlue,
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              new BorderRadius.circular(18.0),
-                                        ),
-                                        onPressed: () {
-                                          _sendMessage();
-                                        },
-                                        child: Icon(Icons.send,
-                                            color: Colors.white),
-                                      )
-                                    ]),
+                                        SizedBox(width: 10.0),
+                                        RaisedButton(
+                                          color: Colors.lightBlue,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                new BorderRadius.circular(
+                                                    18.0),
+                                          ),
+                                          onPressed: () {
+                                            _sendMessage();
+                                          },
+                                          child: Icon(Icons.send,
+                                              color: Colors.white),
+                                        )
+                                      ]),
+                                    ),
                                   ),
                                 ),
                               )
