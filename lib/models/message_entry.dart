@@ -11,9 +11,10 @@ class MessageEntry extends StatefulWidget {
   String receiverImageUrl;
   String lastMessage;
   int lastMessageDate;
+  int unreadMessages;
 
   MessageEntry(
-      this.receiver, this.lastMessage, this.lastMessageDate, this.chatId);
+      this.receiver, this.lastMessage, this.lastMessageDate, this.chatId, this.unreadMessages);
 
   @override
   _MessageEntryState createState() => _MessageEntryState();
@@ -79,6 +80,7 @@ class _MessageEntryState extends State<MessageEntry> {
                         alignment: Alignment.bottomCenter,
                         child: Column(
                           children: <Widget>[
+                            SizedBox(width: 56.0),
                             Text(
                                 _lastTimeStamp(
                                     DateTime.fromMillisecondsSinceEpoch(
@@ -86,6 +88,7 @@ class _MessageEntryState extends State<MessageEntry> {
                                 style: TextStyle(
                                     fontSize: 13.0, color: Colors.grey[700])),
                             SizedBox(height: 10.0),
+                            widget.unreadMessages > 0 ?
                             Container(
                                 decoration: BoxDecoration(
                                     shape: BoxShape.circle,
@@ -93,8 +96,18 @@ class _MessageEntryState extends State<MessageEntry> {
                                 child: Padding(
                                   padding: const EdgeInsets.all(4.0),
                                   child: Text(
-                                    '34',
-                                    style: TextStyle(color: Colors.white),
+                                    widget.unreadMessages.toString(),
+                                    style: TextStyle(color: Colors.white, fontSize: 13.0),
+                                  ),
+                                )) : Container(
+                                decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: Colors.white),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(4.0),
+                                  child: Text(
+                                    widget.unreadMessages.toString(),
+                                    style: TextStyle(color: Colors.white, fontSize: 13.0),
                                   ),
                                 ))
                           ],

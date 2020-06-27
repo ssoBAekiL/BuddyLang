@@ -89,6 +89,7 @@ class _ConversationsScreenState extends State<ConversationsScreen> {
                             : receiver = chat.users[0];*/
                                       int lastMessageDate;
                                       String lastMessage;
+                                      int unreadMessages = 0;
                                       if (chat.messages.length > 0) {
                                         lastMessage = chat
                                             .messages[chat.messages.length - 1]
@@ -96,6 +97,10 @@ class _ConversationsScreenState extends State<ConversationsScreen> {
                                         lastMessageDate = chat
                                             .messages[chat.messages.length - 1]
                                             .timeStamp;
+                                        chat.messages.forEach((m) {
+                                          if (m.timeStamp > chat.lastTimeRead[User.uid])
+                                            unreadMessages++;
+                                        });
                                       } else
                                         lastMessage = 'New conversation!';
                                       return StreamBuilder(
@@ -121,7 +126,8 @@ class _ConversationsScreenState extends State<ConversationsScreen> {
                                                   receiver,
                                                   lastMessage,
                                                   lastMessageDate,
-                                                  chat.reference.documentID);
+                                                  chat.reference.documentID,
+                                                  unreadMessages);
                                             }
                                           });
                                     }

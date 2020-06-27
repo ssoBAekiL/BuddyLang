@@ -52,7 +52,8 @@ class _ChatInstanceState extends State<ChatInstance> {
           else {
             chat = Chat.fromSnapshot(snapshot.data);
             chat.messages = chat.messages.reversed.toList();
-            ///////////////////////////////////
+            if (chat.messages[0].timeStamp > chat.lastTimeRead[User.uid])
+              chat.updateLastTimeRead(User.uid, DateTime.now().millisecondsSinceEpoch);
             print(chat.messages[0].timeStamp);
             return StreamBuilder(
               stream: DatabaseService().getUserStream(
@@ -182,21 +183,15 @@ class _ChatInstanceState extends State<ChatInstance> {
                                                       10.0, 0.0, 6.0, 0.0),
                                               filled: true,
                                               fillColor: Colors.white,
-                                              enabledBorder:
-                                                  OutlineInputBorder(
-                                                borderRadius:
-                                                    BorderRadius.all(
-                                                        Radius.circular(
-                                                            15.0)),
+                                              enabledBorder: OutlineInputBorder(
+                                                borderRadius: BorderRadius.all(
+                                                    Radius.circular(15.0)),
                                                 borderSide: BorderSide(
                                                     color: Colors.white),
                                               ),
-                                              focusedBorder:
-                                                  OutlineInputBorder(
-                                                borderRadius:
-                                                    BorderRadius.all(
-                                                        Radius.circular(
-                                                            15.0)),
+                                              focusedBorder: OutlineInputBorder(
+                                                borderRadius: BorderRadius.all(
+                                                    Radius.circular(15.0)),
                                                 borderSide: BorderSide(
                                                     color: Colors.white),
                                               ),
@@ -208,8 +203,7 @@ class _ChatInstanceState extends State<ChatInstance> {
                                           color: Colors.lightBlue,
                                           shape: RoundedRectangleBorder(
                                             borderRadius:
-                                                new BorderRadius.circular(
-                                                    18.0),
+                                                new BorderRadius.circular(18.0),
                                           ),
                                           onPressed: () {
                                             _sendMessage();

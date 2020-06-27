@@ -13,6 +13,7 @@ class Chat {
   //List<User> users = []; // List of users in the chat (initially limited to 2)
   List<String> users = []; // For first tests will only use Strings
   List<Message> messages = []; // List of all the messages in the chat
+  Map lastTimeRead = {};
   final String chatId;  // Unique identifier of the chat
 
   DocumentReference reference; // Reference to the firebase snapshot
@@ -28,17 +29,18 @@ class Chat {
       if lastMessageDate not given it will be set
       to current time since that only happens if
       the chat has just been created              */
-  Chat(this.chatId, this.users, {this.messages}) {
-    if (this.messages == null) {
-      this.messages = [];
-    }
-  }
+  Chat(this.chatId, this.users, {this.messages, this.lastTimeRead});
 
   /*  Function used to send a new message */
   /*  Only operates locally               */
   void sendMessage(Message message) {
     messages.add(message);
-    DatabaseService().saveMessage(this); // Server call to actual sending of the message
+    DatabaseService().updateChat(this); // Server call to actual sending of the message
+  }
+
+  void updateLastTimeRead(String uid, int timestamp) {
+    this.lastTimeRead[uid] = timestamp;
+    DatabaseService().updateChat(this);
   }
 
   /*  factory that buids a Chat object from a   */
@@ -75,6 +77,7 @@ Chat _chatFromJson(Map<String, dynamic> json) {
     _convertUsers(json['users'] as List),
     // Messages need to be converted from json map to Message object and organized in a list
     messages: _convertMessages(json['messages'] as List),
+    lastTimeRead: json['lastTimeRead'] as Map
   );
 }
 
@@ -125,7 +128,8 @@ Map<String, dynamic> _chatToJson(Chat instance) => <String, dynamic> {
   //'users': instance.users.map((u) => u.uid).toList(),
   'users': instance.users,
   // List of messages needs to be converted to its own json Map
-  'messages': _messageList(instance.messages)
+  'messages': _messageList(instance.messages),
+  'lastTimeRead': instance.lastTimeRead
 };
 
 /*  Private method that builds the Firestore json Map of a List<Message> */

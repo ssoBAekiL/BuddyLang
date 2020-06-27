@@ -17,6 +17,29 @@ class _NewBuddyScreenState extends State<NewBuddyScreen> {
 
   String testText = '';
 
+  _showNotFoundAlert(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("No buddy avaliable"),
+          content: Text(
+              "We are sorry, we couldn't find any avaliable buddy matching your search.\n\nTry again later or change your searching parameters."),
+          actions: [
+            FlatButton(
+              child: Text("OK"),
+              onPressed: () => Navigator.of(context).pop(),
+            )
+          ],
+        );
+      },
+    );
+  }
+
+  void _startNewChat(User user) {
+    return;
+  }
+
   void _searchBuddy(BuildContext context) {
     if (_dropdownLanguage == null) {
       final snackBar =
@@ -31,14 +54,12 @@ class _NewBuddyScreenState extends State<NewBuddyScreen> {
           .getNewBuddy(_dropdownLanguage)
           .then((QuerySnapshot users) {
         User u = _buddySelection(users);
-        if (u != null)
+        if (u != null) {
           print('new user $u');
-        else {
-          final snackBar = SnackBar(
-              content: Text(
-                  'We are sorry, no matching user was found. Please try later or change your preferences'));
-          Scaffold.of(context).showSnackBar(snackBar);
+          _startNewChat(u);
         }
+        else
+          _showNotFoundAlert(context);
       });
   }
 
@@ -48,17 +69,24 @@ class _NewBuddyScreenState extends State<NewBuddyScreen> {
     if (users.documents.isNotEmpty) {
       users.documents.forEach((u) => buddys.add(User.fromSnapshot(u)));
       buddys.removeWhere((buddy) => buddy.reference.documentID == User.uid);
-      if (buddys.length == 1)
+      if (buddys.length == 0)
+        return null;
+      else if (buddys.length == 1)
         newBuddy = buddys[0];
       else if (_dropdownInterest != null) {
-        if (buddys.where((buddy) => buddy.interests.contains(_dropdownInterest)).toList().length > 0) {
+        if (buddys
+                .where((buddy) => buddy.interests.contains(_dropdownInterest))
+                .toList()
+                .length >
+            0) {
           buddys.removeWhere(
-            (buddy) => buddy.interests.contains(_dropdownInterest) == false);
+              (buddy) => buddy.interests.contains(_dropdownInterest) == false);
         }
       }
       if (buddys.length > 1)
         newBuddy = buddys[Random().nextInt(buddys.length)];
-      else newBuddy = buddys[0];
+      else
+        newBuddy = buddys[0];
 
       setState(() {
         testText = newBuddy.toString();

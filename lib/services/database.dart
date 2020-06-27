@@ -48,7 +48,7 @@ class DatabaseService {
   }
 
   /*  Function that uploads a new Message inside it's specific chat int the database  */
-  saveMessage(Chat chat) async {
+  updateChat(Chat chat) async {
     await chatsCollectionRefernece.document(chat.reference.documentID).updateData(chat.toJson());
   }
 

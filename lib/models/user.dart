@@ -10,7 +10,6 @@ import 'package:buddylang/models/chat.dart';
 
 class User {
   static String uid;
-  int lastRead;
   String token = '';
   String bio = '';
   String profileImageUrl = '';
@@ -22,12 +21,13 @@ class User {
   List<String> languages = [];
   List<String> chats = [];
 
+
   DocumentReference reference; // Reference to the firebase snapshot
 
   /*  Constructor of the User object, only name parameter is mandatory      */
   /*  since when a new user registers a first insance of the user is saved  */
   /*  in the databes only with that information                             */
-  User(this.name, {this.token, this.bio, this.chats, this.reference, this.birthDate, this.livingCountry, this.interests, this.languages, this.profileImageUrl, this.backgroundImageUrl, this.lastRead});
+  User(this.name, {this.token, this.bio, this.chats, this.reference, this.birthDate, this.livingCountry, this.interests, this.languages, this.profileImageUrl, this.backgroundImageUrl});
 
   /*  factory that buids a User object from the */
   /*  json data returned by Firestore           */
@@ -85,8 +85,6 @@ class User {
       this.languages = newLanguages;
     if (newChats != null)
       this.chats = newChats;
-    if (newLastRead != null)
-      this.lastRead = newLastRead;
     //  Saves changes on the firebase database
     DatabaseService().updateUser(this);
   }
@@ -142,8 +140,7 @@ User _userFromJson(Map<dynamic, dynamic> json) {
     languages: _convertLanguages(json['languages'] as List),
     chats: _convertChats(json['chats'] as List),
     profileImageUrl: json['profileImageUrl'] as String,
-    backgroundImageUrl: json['backgroundImageUrl'] as String,
-    lastRead: json['lastRead'] as int
+    backgroundImageUrl: json['backgroundImageUrl'] as String
     );
 }
 
@@ -199,6 +196,5 @@ Map<String, dynamic> _userToJson(User instance) =>
     'languages': instance.languages,
     'chats': instance.chats,
     'profileImageUrl': instance.profileImageUrl,
-    'backgroundImageUrl': instance.backgroundImageUrl,
-    'lastRead': instance.lastRead
+    'backgroundImageUrl': instance.backgroundImageUrl
   };
