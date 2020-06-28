@@ -51,9 +51,9 @@ class _ChatInstanceState extends State<ChatInstance> {
             return Scaffold(body: Center(child: CircularProgressIndicator()));
           else {
             chat = Chat.fromSnapshot(snapshot.data);
-            chat.messages = chat.messages.reversed.toList();
-            if (chat.messages[0].timeStamp > chat.lastTimeRead[User.uid])
+            if (chat.messages[chat.messages.length - 1].timeStamp > chat.lastTimeRead[User.uid])
               chat.updateLastTimeRead(User.uid, DateTime.now().millisecondsSinceEpoch);
+            chat.messages = chat.messages.reversed.toList();
             print(chat.messages[0].timeStamp);
             return StreamBuilder(
               stream: DatabaseService().getUserStream(
