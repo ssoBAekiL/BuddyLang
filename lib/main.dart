@@ -1,6 +1,7 @@
 import 'package:buddylang/screens/home_screen.dart';
 import 'package:buddylang/screens/login_screen.dart';
 import 'package:buddylang/screens/new_buddy_screen.dart';
+import 'package:buddylang/screens/profile_screen.dart';
 import 'package:buddylang/screens/user_test_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:buddylang/screens/chat_screen.dart';
@@ -23,5 +24,6 @@ void main() => runApp(MaterialApp(
     '/homeScreen': (context) => HomeScreen(),
     '/preLogin': (context) => PreLogin(),
     '/newBuddyScreen': (context) => NewBuddyScreen(),
+    '/profileScreen': (context) => ProfileScreen()
   }
 ));

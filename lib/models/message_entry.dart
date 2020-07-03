@@ -94,9 +94,9 @@ class _MessageEntryState extends State<MessageEntry> {
                                     shape: BoxShape.circle,
                                     color: Colors.green),
                                 child: Padding(
-                                  padding: const EdgeInsets.all(4.0),
+                                  padding: const EdgeInsets.all(6.0),
                                   child: Text(
-                                    widget.unreadMessages.toString(),
+                                    widget.unreadMessages <= 99 ? widget.unreadMessages.toString() : '99+',
                                     style: TextStyle(color: Colors.white, fontSize: 13.0),
                                   ),
                                 )) : Container(

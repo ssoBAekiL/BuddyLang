@@ -90,7 +90,7 @@ class _ConversationsScreenState extends State<ConversationsScreen> {
                                       int lastMessageDate;
                                       String lastMessage;
                                       int unreadMessages = 0;
-                                      if (chat.messages.length > 0) {
+                                      if (chat.messages != null && chat.messages.length > 0) {
                                         lastMessage = chat
                                             .messages[chat.messages.length - 1]
                                             .message;

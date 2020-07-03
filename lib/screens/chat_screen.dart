@@ -51,10 +51,9 @@ class _ChatInstanceState extends State<ChatInstance> {
             return Scaffold(body: Center(child: CircularProgressIndicator()));
           else {
             chat = Chat.fromSnapshot(snapshot.data);
-            if (chat.messages[chat.messages.length - 1].timeStamp > chat.lastTimeRead[User.uid])
+            if (chat.messages.length > 0 && chat.messages[chat.messages.length - 1].timeStamp > chat.lastTimeRead[User.uid])
               chat.updateLastTimeRead(User.uid, DateTime.now().millisecondsSinceEpoch);
             chat.messages = chat.messages.reversed.toList();
-            print(chat.messages[0].timeStamp);
             return StreamBuilder(
               stream: DatabaseService().getUserStream(
                   chat.users[0] != User.uid ? chat.users[0] : chat.users[1]),
@@ -79,8 +78,8 @@ class _ChatInstanceState extends State<ChatInstance> {
                                   const EdgeInsets.fromLTRB(0.0, 5.0, 5.0, 5.0),
                               child: GestureDetector(
                                 onTap: () {
-                                  Navigator.popAndPushNamed(
-                                      context, '/homeScreen');
+                                  Navigator.pushNamed(
+                                      context, '/profileScreen', arguments: {'edit': true});
                                 },
                                 child: SizedBox(
                                   width: 50.0,
@@ -142,7 +141,7 @@ class _ChatInstanceState extends State<ChatInstance> {
                                           messageDate.month !=
                                               previousMessageDate.month ||
                                           messageDate.year !=
-                                              previousMessageDate.year) {
+                                              previousMessageDate.year || index == chat.messages.length -1) {
                                         return Column(children: <Widget>[
                                           Bubble.dateBubble(messageDate),
                                           Bubble.fromMessage(

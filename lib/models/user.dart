@@ -52,7 +52,14 @@ class User {
       Chat chat =  Chat.fromSnapshot(await DatabaseService().getChat(this.chats[i]));
       sortedChats.add(chat);
     }
-    sortedChats.sort((a, b) => b.messages[b.messages.length -1].timeStamp.compareTo(a.messages[a.messages.length -1].timeStamp));
+    sortedChats.sort((a, b) {
+      if  (b.messages.length < 1)
+        return 1;
+      else if (a.messages.length < 1)
+        return -1;
+      else
+      return b.messages[b.messages.length -1].timeStamp.compareTo(a.messages[a.messages.length -1].timeStamp);
+    });
     return sortedChats.map((c) => c.reference.documentID).toList();
   }
 

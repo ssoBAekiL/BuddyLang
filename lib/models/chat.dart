@@ -2,6 +2,8 @@
 /*          BuddyLang         */
 /*  Author: Pablo Borrelli    */
 /*  Last updated: 29/05/2020  */
+import 'package:buddylang/models/user.dart';
+import 'package:buddylang/screens/home_screen.dart';
 /******************************/
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -14,7 +16,6 @@ class Chat {
   List<String> users = []; // For first tests will only use Strings
   List<Message> messages = []; // List of all the messages in the chat
   Map lastTimeRead = {};
-  final String chatId;  // Unique identifier of the chat
 
   DocumentReference reference; // Reference to the firebase snapshot
 
@@ -29,7 +30,7 @@ class Chat {
       if lastMessageDate not given it will be set
       to current time since that only happens if
       the chat has just been created              */
-  Chat(this.chatId, this.users, {this.messages, this.lastTimeRead});
+  Chat(this.users, {this.messages, this.lastTimeRead});
 
   /*  Function used to send a new message */
   /*  Only operates locally               */
@@ -62,16 +63,25 @@ class Chat {
   /*  For debug only */
   @override
   String toString() {
-    return 'Chat ID: $chatId\nUsers: ${users[0]}, ${users[1]}\n'
+    return 'Users: ${users[0]}, ${users[1]}\n'
         'Messages:\n $messages';
   }
+
+  void saveNewChat() {
+    messages = [];
+    lastTimeRead = {};
+    users.forEach((uid) => lastTimeRead[uid] = 0);
+    DatabaseService().createChat(this).then((chatId) {
+      users.forEach((u) => DatabaseService().addChatToUser(u, chatId.documentID));
+    });
+  }
+
 }
 
 /*  Private method that instantiates a new Chat object      */
 /*  containing the data in the json received from Firestore */
 Chat _chatFromJson(Map<String, dynamic> json) {
   return Chat(
-    json['chatId'] as String,
     // Json contains only uid String,users need to be instantiated with Firestore data
     // json['users'].forEach((u) => User(u, 'prova')).toList() as List,
     _convertUsers(json['users'] as List),
@@ -123,7 +133,6 @@ List<String> _convertUsers(List usersMap) {
 
 /*  Private method that builds the Firestore json Map of a Chat object */
 Map<String, dynamic> _chatToJson(Chat instance) => <String, dynamic> {
-  'chatId': instance.chatId,
   // No need to store full User object (redundant), only uid stored as String
   //'users': instance.users.map((u) => u.uid).toList(),
   'users': instance.users,

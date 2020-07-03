@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:buddylang/models/chat.dart';
 import 'package:buddylang/models/user.dart';
 import 'package:buddylang/services/database.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -36,10 +37,6 @@ class _NewBuddyScreenState extends State<NewBuddyScreen> {
     );
   }
 
-  void _startNewChat(User user) {
-    return;
-  }
-
   void _searchBuddy(BuildContext context) {
     if (_dropdownLanguage == null) {
       final snackBar =
@@ -56,7 +53,7 @@ class _NewBuddyScreenState extends State<NewBuddyScreen> {
         User u = _buddySelection(users);
         if (u != null) {
           print('new user $u');
-          _startNewChat(u);
+          Chat([User.uid, u.reference.documentID]).saveNewChat();
         }
         else
           _showNotFoundAlert(context);
