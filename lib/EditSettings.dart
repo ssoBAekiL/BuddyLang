@@ -65,6 +65,9 @@ class EditProfileState extends State<EditProfile> {
   File _profPicture;
   File _backGroundPicture;
   var bio_ = TextEditingController();
+  var name_ = TextEditingController();
+  var birthDate_ = TextEditingController();
+  var _value;
 
 
   Future changeProfilePicture() async {
@@ -74,6 +77,20 @@ class EditProfileState extends State<EditProfile> {
       _profPicture = File(newImage.path);
     });
   }
+
+  Future<Null> _selectDate(BuildContext context) async {
+    final DateTime picked = await showDatePicker(
+        context: context,
+        initialDate: newBirthDate,
+        firstDate: DateTime(1960, 1),
+        lastDate: DateTime.now());
+    if (picked != null && picked != newBirthDate)
+      setState(() {
+        newBirthDate = picked;
+        //user.update(newBirthDate: newBirthDate.microsecondsSinceEpoch);
+      });
+  }
+
 
   Future changeBackgroundPicture() async {
     final picker = ImagePicker();
@@ -87,6 +104,8 @@ class EditProfileState extends State<EditProfile> {
   var _customScreenHeight;
   var _customLabelsHeight;
   var _customImagesize ;
+  DateTime newBirthDate = DateTime.now()  ;
+
   List<String> futureButtons;
   User user;
   List<String> lang_list= List<String>(11);
@@ -231,6 +250,7 @@ class EditProfileState extends State<EditProfile> {
                   bio_.text=user.bio;
                  studied= user.languages;
                  interested=user.interests;
+                  //newBirthDate = DateTime.fromMillisecondsSinceEpoch(user.birthDate);
                   return GestureDetector(
                     onTap:  (){
                      FocusScope.of(context).unfocus();
@@ -239,6 +259,7 @@ class EditProfileState extends State<EditProfile> {
                     children: <Widget>[
                       new ListView(
                       children: <Widget>[
+                        _Edit_Info(),
                         _buildprofile(),
                         _buildbio(),
                         _buildlanguages(),
@@ -254,6 +275,272 @@ class EditProfileState extends State<EditProfile> {
           ),
         ),
       ),
+    );
+  }
+
+  Widget _change_name() {
+    return Wrap(
+      children: <Widget>[
+        Text(
+          "  Name : ",
+          style: TextStyle(
+              fontSize: 24,
+              fontStyle: FontStyle.italic,
+              fontWeight: FontWeight.bold
+          ),
+        ),
+        Padding(
+          padding: EdgeInsets.fromLTRB(10, 0, 0, 0),
+          child : TextFormField(
+            decoration: InputDecoration(
+              border: InputBorder.none,
+              hintText: "Insert new name",
+            ),
+            controller: name_,
+            keyboardType: TextInputType.text,
+            style: TextStyle(
+              fontStyle: FontStyle.italic,
+              fontWeight: FontWeight.bold,
+              fontSize: 22,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+
+    Widget _change_country(){
+      Widget _edit_country(){
+        return DropdownButton<String>(
+          items: [
+            DropdownMenuItem<String>(
+              child: Row(
+                children: <Widget>[
+                  Icon(Icons.filter_1),
+                  Text('Middle East'),
+                ],
+              ),
+              value: 'Middle East',
+            ),
+            DropdownMenuItem<String>(
+              child: Row(
+                children: <Widget>[
+                  Icon(Icons.filter_2),
+                  Text('China'),
+                ],
+              ),
+              value: 'China',
+            ),
+            DropdownMenuItem<String>(
+              child: Row(
+                children: <Widget>[
+                  Icon(Icons.filter_3),
+                  Text('England'),
+                ],
+              ),
+              value: 'England',
+            ),
+            DropdownMenuItem<String>(
+              child: Row(
+                children: <Widget>[
+                  Icon(Icons.filter_4),
+                  Text('France'),
+                ],
+              ),
+              value: 'France',
+            ),
+            DropdownMenuItem<String>(
+              child: Row(
+                children: <Widget>[
+                  Icon(Icons.filter_5),
+                  Text('India'),
+                ],
+              ),
+              value: 'India',
+            ),
+            DropdownMenuItem<String>(
+              child: Row(
+                children: <Widget>[
+                  Icon(Icons.filter_6),
+                  Text('Italy'),
+                ],
+              ),
+              value: 'Italy',
+            ),
+            DropdownMenuItem<String>(
+              child: Row(
+                children: <Widget>[
+                  Icon(Icons.filter_7),
+                  Text('Japan'),
+                ],
+              ),
+              value: 'Japan',
+            ),
+            DropdownMenuItem<String>(
+              child: Row(
+                children: <Widget>[
+                  Icon(Icons.filter_8),
+                  Text('Germany'),
+                ],
+              ),
+              value: 'Germany',
+            ),
+            DropdownMenuItem<String>(
+              child: Row(
+                children: <Widget>[
+                  Icon(Icons.filter_9),
+                  Text('Other'),
+                ],
+              ),
+              value: 'Other',
+            ),
+          ],
+          isExpanded: false,
+          onChanged: (String value) {
+            setState(() {
+              _value = value;
+            });
+          },
+          hint: Text('Select Country'),
+          value: _value,
+          underline: Container(
+            decoration: const BoxDecoration(
+                border: Border(bottom: BorderSide(color: Colors.grey))
+            ),
+          ),
+          style: TextStyle(
+            fontSize: 22,
+            color: Colors.black,
+          ),
+          iconEnabledColor: Colors.pink,
+          //        iconDisabledColor: Colors.grey,
+          iconSize: 30,
+        );
+      }
+      return Wrap(
+        children: <Widget>[
+          Text(
+            "  Living Country : ",
+            style: TextStyle(
+                fontSize: 24,
+                fontStyle: FontStyle.italic,
+                fontWeight: FontWeight.bold
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.fromLTRB(10, 0, 0, 0),
+            child : _edit_country(),
+          ),
+        ],
+      );
+  }
+
+  Widget _change_birth() {
+    return Wrap(
+      spacing: 50,
+      runSpacing: 10,
+      children: <Widget>[
+        Text(
+          "Actual birth date :",
+          style: TextStyle(
+              fontSize: 24,
+              fontStyle: FontStyle.italic,
+              fontWeight: FontWeight.bold
+          ),
+        ),
+        Align(
+          alignment: Alignment(-0.5,0),
+          child: Text("${newBirthDate.toLocal()}".split(' ')[0],
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontStyle: FontStyle.italic,
+            fontSize: 24,
+            ),
+          ),
+        ),
+        Align(
+          alignment: Alignment(0,0),
+          child : RaisedButton(
+            color: Colors.lightBlue,
+            shape: RoundedRectangleBorder(
+              borderRadius: new BorderRadius.circular(18.0),
+              side: BorderSide(color: Colors.black),
+            ),
+          onPressed: () => _selectDate(context),
+          child: Text(
+              'Select date',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+          ),),
+         ),
+        ),
+      ],
+    );
+  }
+
+
+  //void update_user_Birth(){
+ //   user.update(newBirthDate: (DateTime.now().year)-((DateTime.utc(birthDate_)).year));
+  //  FocusScope.of(context).unfocus();
+  //}
+  void update_user_country(){
+    user.update(newLivingCountry: _value);
+
+  }
+
+  void update_user_name(){
+     user.update(newName: name_.text);
+  }
+
+  void update_all(){
+    update_user_name();
+    update_user_country();
+    FocusScope.of(context).unfocus();
+  }
+
+  Widget _SaveUpdates(){
+    return Align(
+        alignment: Alignment.center,
+        child : new RaisedButton(
+            onPressed: update_all,
+            color: Colors.black,
+            shape: RoundedRectangleBorder(
+              borderRadius: new BorderRadius.circular(18.0),
+              side: BorderSide(color: Colors.white),
+            ),
+            child : Text(
+              "Update",
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
+            )
+        )
+    );
+  }
+
+  Widget _Edit_Info(){
+    return Card(
+      elevation: 3.0,
+        child: SizedBox(
+        width: _screenWidth,
+        height: _customLabelsHeight,
+        child : ListView(
+        children: <Widget>[
+          Wrap(
+            spacing: 10,
+            runSpacing: 10,
+            children: <Widget>[
+              _change_name(),
+              _change_country(),
+              _change_birth(),
+              _SaveUpdates(),
+            ],
+          ),
+        ],
+        ),
+        ),
     );
   }
 
@@ -331,7 +618,7 @@ class EditProfileState extends State<EditProfile> {
                 ),
               ),
               new Positioned(
-                top: 120,
+                top: 100,
                 left: 5,
                 child : GestureDetector(
                   onTap: () => _showChoiceDialog(context, true),

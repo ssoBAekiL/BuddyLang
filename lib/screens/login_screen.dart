@@ -113,11 +113,16 @@ class _LoginScreenState extends State<LoginScreen> {
            else {
              user = User.fromSnapshot(snapshot.data);
              _backGroundPicture=user.backgroundImageUrl;
-             print(user.languages);
+             //user.update(newName: 'Mario' );
+             //user.update(newBirthDate: (DateTime.now().year)-((DateTime.utc(2000, 01, 01)).year));
+             //user.update(newLivingCountry: "Italy");
              return Stack(
                children: <Widget>[
                  new ListView(
                    children: <Widget>[
+                     Text( ""),
+                     _Name_year(),
+                     _Country(),
                      _buildprofile(),
                      _buildbio(),
                      _buildlanguages(),
@@ -145,6 +150,26 @@ Widget _appBar () {
       ),
     );
 }
+
+Widget _Name_year(){
+  return Text( (user.name + "," + user.birthDate.toString()),
+  style: TextStyle(
+  fontSize: 32,
+  fontStyle: FontStyle.italic,
+  fontWeight: FontWeight.bold
+  ),
+  );
+}
+
+  Widget _Country(){
+    return Text( ("    From : " + user.livingCountry),
+      style: TextStyle(
+          fontSize: 24,
+          fontStyle: FontStyle.italic,
+          fontWeight: FontWeight.bold
+      ),
+    );
+  }
 
   Widget _buildprofile(){
     return new Padding(
@@ -194,7 +219,7 @@ Widget _appBar () {
           ),
         ),
         Positioned (
-           top : 120,
+           top : 100,
           left : 5,
           child :  new GestureDetector(
             onTap: () {
