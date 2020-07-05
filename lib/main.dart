@@ -6,6 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+
 void main() => runApp(MultiProvider(providers: [
       ChangeNotifierProvider(create: (_) => UserData()),
       Provider<AuthService>(
@@ -14,7 +15,6 @@ void main() => runApp(MultiProvider(providers: [
     ], child: MyApp()));
 
 class MyApp extends StatelessWidget {
-  // aa
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
