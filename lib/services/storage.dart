@@ -33,7 +33,7 @@ class StorageService {
 
   /*  Function that given a StorageReference actually takes care of uploading any image */
   static Future<String> _uploadImage(File file, String filename, StorageReference reference) async {
-    final StorageUploadTask uploadTask = _userImageReference.child('$filename.jpg').putFile(file);
+    final StorageUploadTask uploadTask = reference.child('$filename.jpg').putFile(file);
     final StorageTaskSnapshot downloadUrl = (await uploadTask.onComplete);
     final String url = (await downloadUrl.ref.getDownloadURL());
     print(url);

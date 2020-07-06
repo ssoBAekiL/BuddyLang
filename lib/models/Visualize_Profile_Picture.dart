@@ -1,3 +1,4 @@
+import 'package:buddylang/utilities/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/services.dart';
@@ -38,7 +39,9 @@ class VisualizeProfilePictureState extends State<VisualizeProfilePicture> {
                 child: Hero(
                   tag: 'imageHero',
                   child: CachedNetworkImage(
-                    imageUrl: user.profileImageUrl,
+                    imageUrl: user.backgroundImageUrl == null
+                            ? defaultImage
+                            : user.backgroundImageUrl,
                     placeholder: (context, imageUrl) =>
                         CircularProgressIndicator(),
                     errorWidget: (context, imageUrl, error) =>
