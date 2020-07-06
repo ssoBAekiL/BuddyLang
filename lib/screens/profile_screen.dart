@@ -1,5 +1,8 @@
 import 'dart:ui';
+import 'package:buddylang/models/Visualize_Profile_Picture.dart';
+import 'package:buddylang/models/chat.dart';
 import 'package:buddylang/screens/editProfile_screen.dart';
+import 'package:buddylang/services/auth_service.dart';
 import 'package:buddylang/utilities/constants.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
@@ -8,13 +11,14 @@ import 'package:flutter/painting.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 
 import 'package:buddylang/models/user.dart';
 import 'package:buddylang/services/database.dart';
 import 'dart:io';
 
-import 'package:buddylang/services/visualizeProfileBackground.dart';
+import 'package:buddylang/models/visualizeProfileBackground.dart';
 
 class ProfileScreen extends StatefulWidget {
   @override
@@ -83,6 +87,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   var _customLabelsHeight;
   var _customImagesize ;
   User user;
+  String _buddyId;
   //var bio = "";
   //bamboozle= _MyRead().then((value) => String);
   void initState() {
@@ -91,7 +96,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Widget build(BuildContext context) {
     Map args = ModalRoute.of(context).settings.arguments;
+    if (args == null) {
+      args = {};
+      args['uid'] = User.uid;
+      args['edit'] = true;
+      args['newBuddy'] = false;
+    }
 
+    _buddyId = args['uid'];
     _customImagesize= 100.0 ;
     _screenWidth = MediaQuery.of(context).size.width * 0.94;
     _customScreenHeight= MediaQuery.of(context).size.height * 0.94;
@@ -105,7 +117,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
        width: _screenWidth,
        height: _customScreenHeight,
        child: StreamBuilder(
-         stream : DatabaseService().getUserStream(args['uid'] == null ? User.uid : args['uid']),
+         stream : DatabaseService().getUserStream(args['uid']),
          builder : (context, snapshot) {
            if (!snapshot.hasData)
              return Scaffold(
@@ -118,11 +130,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                children: <Widget>[
                  new ListView(
                    children: <Widget>[
+                     args['newBuddy'] == true ? _startChatButton() : SizedBox(height: 5.0),
                      _buildprofile(),
+                     _nameYear(),
+                     _country(),
                      _buildbio(),
                      _buildlanguages(),
                      _buildInterests(),
-                     args['edit'] == true ? _editButton() : SizedBox(height: 10.0),
+                     args['edit'] == true ? Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[_editButton(), SizedBox(width: 8.0), _logOutButton()],) : SizedBox(height: 5.0),
+                     args['newBuddy'] == true ? _startChatButton() : SizedBox(height: 5.0),
                    ],
                  ),
                ],
@@ -143,8 +159,42 @@ Widget _appBar () {
             fontStyle: FontStyle.italic,
             fontSize: 28),
       ),
+      centerTitle: true,
     );
 }
+
+Widget _nameYear(){
+  return Column(
+    children: <Widget>[
+      Text(user.name,
+      style: TextStyle(
+      fontSize: 32,
+      fontStyle: FontStyle.italic,
+      fontWeight: FontWeight.bold
+      ),
+      textAlign: TextAlign.center,
+      ),
+      Text(user.birthDate != null ? DateFormat('dd-MM-yyyy').format(DateTime.fromMillisecondsSinceEpoch(user.birthDate)) : '',
+      style: TextStyle(
+      fontSize: 24,
+      ),
+      textAlign: TextAlign.center,
+      ),
+      SizedBox(height: 2.0)
+    ],
+  );
+}
+
+  Widget _country(){
+    return Text( ("From: " + user.livingCountry),
+      style: TextStyle(
+          fontSize: 24,
+          fontStyle: FontStyle.italic,
+          fontWeight: FontWeight.bold
+      ),
+      textAlign: TextAlign.center,
+    );
+  }
 
   Widget _buildprofile(){
     return new Padding(
@@ -153,7 +203,8 @@ Widget _appBar () {
       children: <Widget>[
         GestureDetector(
             onTap: () {
-              visualizeProfileBackground();
+              Navigator.pushNamed(context, '/visualizeProfileBackgroundScreen', arguments: {'uid': _buddyId});
+              //visualizeProfileBackground();
             },//() //{
         //      Navigator.push(context, MaterialPageRoute(builder: (_) {
        //         return DetailScreen(tag: _tag[0], url: _url[0]);
@@ -198,7 +249,7 @@ Widget _appBar () {
           left : 5,
           child :  new GestureDetector(
             onTap: () {
-              null;
+              Navigator.pushNamed(context, '/visualizeProfilePictureScreen', arguments: {'uid': _buddyId});
               //visualizeProfilePicture();
             },
             child : new SizedBox(
@@ -277,7 +328,7 @@ Widget _appBar () {
                 elevation: 3.0,
                 child : SizedBox(
                   width: _screenWidth,
-                  height: _customLabelsHeight,
+                  height: _customLabelsHeight - 60,
                   child: Padding(
                     padding: const EdgeInsets.fromLTRB(9, 7, 9, 7),
                     child: Text(
@@ -488,13 +539,55 @@ Widget _appBar () {
     );
   }
 
-  /*void visualizeProfilePicture() {
+  Widget _startChatButton(){
+    return Align(
+      alignment: Alignment.center,
+      child : new RaisedButton(
+          onPressed: startChat,
+        color: Colors.black,
+        shape: RoundedRectangleBorder(
+          borderRadius: new BorderRadius.circular(18.0),
+          side: BorderSide(color: Colors.white),
+        ),
+        child : Text(
+          "Start a conversation!",
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          ),
+        )
+      )
+    );
+  }
+
+  Widget _logOutButton(){
+    return Align(
+      alignment: Alignment.center,
+      child : new RaisedButton(
+          onPressed: logOut,
+        color: Colors.black,
+        shape: RoundedRectangleBorder(
+          borderRadius: new BorderRadius.circular(18.0),
+          side: BorderSide(color: Colors.white),
+        ),
+        child : Text(
+          "Logout",
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          ),
+        )
+      )
+    );
+  }
+
+  void visualizeProfilePicture() {
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => VisualizeProfilePicture(),
       ),
     );
-  }*/
+  }
 
   void visualizeProfileBackground() {
     Navigator.push(
@@ -510,5 +603,17 @@ Widget _appBar () {
       MaterialPageRoute(builder: (context) => EditProfile(),
       ),
     );
+  }
+
+  void startChat() {
+    Chat([User.uid, _buddyId]).saveNewChat().then((chatId) {
+      Navigator.popAndPushNamed(context, '/chatScreen', arguments: {'chatId': chatId});
+    });
+  }
+
+  void logOut() {
+    AuthService().signOut();
+    Navigator.of(context).pushNamedAndRemoveUntil(
+      '/login', (Route<dynamic> route) => false);
   }
 }

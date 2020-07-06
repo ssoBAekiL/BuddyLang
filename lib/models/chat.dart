@@ -67,13 +67,16 @@ class Chat {
         'Messages:\n $messages';
   }
 
-  void saveNewChat() {
+  Future<String> saveNewChat() async {
+    String id;
     messages = [];
     lastTimeRead = {};
     users.forEach((uid) => lastTimeRead[uid] = 0);
-    DatabaseService().createChat(this).then((chatId) {
+    await DatabaseService().createChat(this).then((chatId) {
       users.forEach((u) => DatabaseService().addChatToUser(u, chatId.documentID));
+      id = chatId.documentID;
     });
+  return id;
   }
 
 }

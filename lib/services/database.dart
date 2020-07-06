@@ -49,7 +49,7 @@ class DatabaseService {
   }
 
   /*  Function that uploads a new Message inside it's specific chat int the database  */
-  updateChat(Chat chat) async {
+  void updateChat(Chat chat) async {
     await chatsCollectionRefernece.document(chat.reference.documentID).updateData(chat.toJson());
   }
 
@@ -59,5 +59,9 @@ class DatabaseService {
 
   void addChatToUser(String uid, String chatId) {
     usersCollectionRefernece.document(uid).updateData({"chats": FieldValue.arrayUnion([chatId])});
+  }
+
+  Future<DocumentSnapshot> getUser(String uid) {
+    return usersCollectionRefernece.document(uid).get();
   }
 }

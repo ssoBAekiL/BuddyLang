@@ -79,7 +79,7 @@ class _ChatInstanceState extends State<ChatInstance> {
                               child: GestureDetector(
                                 onTap: () {
                                   Navigator.pushNamed(
-                                      context, '/profileScreen', arguments: {'edit': true});
+                                      context, '/profileScreen', arguments: {'uid': receiver.reference.documentID,'edit': false});
                                 },
                                 child: SizedBox(
                                   width: 50.0,

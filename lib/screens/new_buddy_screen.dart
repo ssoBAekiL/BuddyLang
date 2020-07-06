@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:buddylang/models/chat.dart';
 import 'package:buddylang/models/user.dart';
+import 'package:buddylang/screens/navigation_screen.dart';
 import 'package:buddylang/services/database.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -15,8 +16,6 @@ class _NewBuddyScreenState extends State<NewBuddyScreen> {
   String _dropdownLanguage;
   String _dropdownInterest;
   User user;
-
-  String testText = '';
 
   _showNotFoundAlert(BuildContext context) {
     showDialog(
@@ -52,8 +51,11 @@ class _NewBuddyScreenState extends State<NewBuddyScreen> {
           .then((QuerySnapshot users) {
         User u = _buddySelection(users);
         if (u != null) {
-          print('new user $u');
-          Chat([User.uid, u.reference.documentID]).saveNewChat();
+          // Chat([User.uid, u.reference.documentID]).saveNewChat();
+          setState(() {
+            NavigationScreen.currentIndex = 1;
+          });
+          Navigator.pushNamed(context, '/profileScreen', arguments: {'uid': u.reference.documentID, 'edit': false, 'newBuddy': true});
         }
         else
           _showNotFoundAlert(context);
@@ -84,10 +86,6 @@ class _NewBuddyScreenState extends State<NewBuddyScreen> {
         newBuddy = buddys[Random().nextInt(buddys.length)];
       else
         newBuddy = buddys[0];
-
-      setState(() {
-        testText = newBuddy.toString();
-      });
       return newBuddy;
     }
     return null;
@@ -100,6 +98,7 @@ class _NewBuddyScreenState extends State<NewBuddyScreen> {
             title: Text('Find new buddy'),
             centerTitle: true,
             backgroundColor: Colors.lightBlue[600]),
+        backgroundColor: Colors.grey[100],
         body: StreamBuilder(
             stream: DatabaseService().getUserStream(User.uid),
             builder: (context, snapshot) {
@@ -193,8 +192,7 @@ class _NewBuddyScreenState extends State<NewBuddyScreen> {
                               color: Colors.lightBlue[500],
                               child: Text('Search'),
                               onPressed: () => _searchBuddy(context)),
-                        ),
-                        Text(testText),
+                        )
                       ],
                     ),
                   ),

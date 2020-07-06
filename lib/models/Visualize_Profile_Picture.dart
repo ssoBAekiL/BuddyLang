@@ -3,32 +3,34 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/services.dart';
 import 'package:buddylang/services/database.dart';
 import 'package:buddylang/models/user.dart';
-import 'package:buddylang/utilities/constants.dart';
 
-
-class  VisualizeProfileBackground extends StatefulWidget {
+class VisualizeProfilePicture extends StatefulWidget {
   @override
-  VisualizeProfileBackgroundState createState() =>  VisualizeProfileBackgroundState();
+  VisualizeProfilePictureState createState() => VisualizeProfilePictureState();
 }
 
-class  VisualizeProfileBackgroundState extends State< VisualizeProfileBackground> {
+class VisualizeProfilePictureState extends State<VisualizeProfilePicture> {
   User user;
-
   @override
   Widget build(BuildContext context) {
+    Map args = ModalRoute.of(context).settings.arguments;
+    if (args == null) {
+      args = {};
+      args['uid'] = User.uid;
+    }
+
     return Scaffold(
       backgroundColor: Colors.grey[100],
       appBar: AppBar(
-        backgroundColor: Colors.grey[100],
-        title: Text('Background Picture'),
+        backgroundColor: Colors.lightBlue[600],
+        title: Text('Profile Picture'),
       ),
       body: StreamBuilder(
-          stream: DatabaseService().getUserStream(User.uid),
+          stream: DatabaseService().getUserStream(args['uid']),
           builder: (context, snapshot) {
             if (!snapshot.hasData)
               return Scaffold(
-                body: Center(
-                    child: CircularProgressIndicator()),
+                body: Center(child: CircularProgressIndicator()),
               );
             else {
               user = User.fromSnapshot(snapshot.data);
@@ -36,10 +38,8 @@ class  VisualizeProfileBackgroundState extends State< VisualizeProfileBackground
                 child: Hero(
                   tag: 'imageHero',
                   child: CachedNetworkImage(
-                    imageUrl: user.backgroundImageUrl == null
-                            ? defaultBackgroundImage
-                            : user.backgroundImageUrl,
-                      placeholder: (context, imageUrl) =>
+                    imageUrl: user.profileImageUrl,
+                    placeholder: (context, imageUrl) =>
                         CircularProgressIndicator(),
                     errorWidget: (context, imageUrl, error) =>
                         Icon(Icons.error),
@@ -47,8 +47,7 @@ class  VisualizeProfileBackgroundState extends State< VisualizeProfileBackground
                 ),
               );
             }
-          }
-      ),
+          }),
     );
   }
 }
@@ -81,10 +80,9 @@ class _DetailScreenState extends State<DetailScreen> {
             tag: 'imageHero',
             child: CachedNetworkImage(
               imageUrl:
-              'https://raw.githubusercontent.com/flutter/website/master/src/_includes/code/layout/lakes/images/lake.jpg',
+                  'https://raw.githubusercontent.com/flutter/website/master/src/_includes/code/layout/lakes/images/lake.jpg',
               placeholder: (context, imageUrl) => CircularProgressIndicator(),
-              errorWidget: (context, imageUrl, error) =>
-                  Icon(Icons.error),
+              errorWidget: (context, imageUrl, error) => Icon(Icons.error),
             ),
           ),
         ),

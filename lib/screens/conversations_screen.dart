@@ -15,6 +15,27 @@ class _ConversationsScreenState extends State<ConversationsScreen> {
   List<Chat> conversations = [];
   User receiver;
 
+  Widget _noChatsText() {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(20.0, 0.0, 20.0, 0.0),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Text('You dont have any active chat',
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 26.0, color: Colors.grey[600])),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(20.0, 20.0, 20.0, 0.0),
+            child: Text(
+              'Click "Find buddy" below to begin a new conversation and start precticing a new language!',
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 18.0, color: Colors.grey[600])),
+          )
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return TimerBuilder.periodic(Duration(seconds: 1), //updates every second
@@ -29,119 +50,109 @@ class _ConversationsScreenState extends State<ConversationsScreen> {
             else {
               user = User.fromSnapshot(snapshot.data);
               return Scaffold(
-                appBar: AppBar(
-                    title: Text('BuddyLang'),
+                  appBar: AppBar(
+                    backgroundColor: Colors.lightBlue,
+                    title: Text(
+                      'BuddyLang',
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontStyle: FontStyle.italic,
+                          fontSize: 28),
+                    ),
                     centerTitle: true,
-                    backgroundColor: Colors.lightBlue[600],
-                    actions: <Widget>[
-                      Padding(
-                          padding: EdgeInsets.only(right: 20.0),
-                          child: GestureDetector(
-                            onTap: () {
-                              Navigator.pushNamed(context, '/newBuddyScreen');
-                            },
-                            child: Icon(
-                              Icons.add,
-                              size: 26.0,
-                            ),
-                          ))
-                    ]),
-                backgroundColor: Colors.grey[200],
-                body: FutureBuilder<List<String>>(
-                    future: user.sortChat(),
-                    builder: (BuildContext context,
-                        AsyncSnapshot<List<String>> listSnapshot) {
-                      if (!listSnapshot.hasData) {
-                        // while data is loading:
-                        if (user.chats != null)
-                          return Center(
-                            child: CircularProgressIndicator(),
-                          );
-                        else
-                          return Center(
-                              child: Text(
-                            "You dont have any active chat",
-                            style: TextStyle(
-                                fontSize: 25.0, color: Colors.grey[600]),
-                          ));
-                      } else {
-                        List<String> sortedChats = listSnapshot.data;
-                        return ListView.builder(
-                            itemCount: sortedChats.length,
-                            itemBuilder: (BuildContext ctxt, int index) {
-                              return StreamBuilder(
-                                  stream: DatabaseService()
-                                      .getStream(sortedChats[index]),
-                                  builder: (context, snapshot) {
-                                    if (!snapshot.hasData)
-                                      return Center(
-                                          child: CircularProgressIndicator());
-                                    else {
-                                      user.sortChat();
-                                      Chat chat =
-                                          Chat.fromSnapshot(snapshot.data);
-                                      int receiverInt;
-                                      chat.users[0] == user.reference.documentID
-                                          ? receiverInt = 1
-                                          : receiverInt = 0;
-                                      /*chat.users[0] == user.reference.documentID
-                            ? receiver = chat.users[1]
-                            : receiver = chat.users[0];*/
-                                      int lastMessageDate;
-                                      String lastMessage;
-                                      int unreadMessages = 0;
-                                      if (chat.messages != null && chat.messages.length > 0) {
-                                        lastMessage = chat
-                                            .messages[chat.messages.length - 1]
-                                            .message;
-                                        lastMessageDate = chat
-                                            .messages[chat.messages.length - 1]
-                                            .timeStamp;
-                                        chat.messages.forEach((m) {
-                                          if (m.timeStamp > chat.lastTimeRead[User.uid])
-                                            unreadMessages++;
-                                        });
-                                      } else
-                                        lastMessage = 'New conversation!';
-                                      return StreamBuilder(
-                                          stream: DatabaseService()
-                                              .getUserStream(
-                                                  chat.users[receiverInt]),
-                                          builder: (context, snapshot) {
-                                            if (!snapshot.hasData)
-                                              return Container(
-                                                height: MediaQuery.of(context)
-                                                    .size
-                                                    .height,
-                                                child: Scaffold(
-                                                  body: Center(
-                                                      child:
-                                                          CircularProgressIndicator()),
-                                                ),
-                                              );
-                                            else {
-                                              receiver = User.fromSnapshot(
-                                                  snapshot.data);
-                                              return MessageEntry(
-                                                  receiver,
-                                                  lastMessage,
-                                                  lastMessageDate,
-                                                  chat.reference.documentID,
-                                                  unreadMessages);
-                                            }
+                  ),
+                  backgroundColor: Colors.grey[200],
+                  body: FutureBuilder<List<String>>(
+                      future: user.sortChat(),
+                      builder: (BuildContext context,
+                          AsyncSnapshot<List<String>> listSnapshot) {
+                        if (!listSnapshot.hasData) {
+                          // while data is loading:
+                          if (user.chats != null)
+                            return Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          else
+                            return _noChatsText();
+                        } else if (user.chats == null ||
+                            user.chats.length < 1) {
+                          return _noChatsText();
+                        } else {
+                          List<String> sortedChats = listSnapshot.data;
+                          return ListView.builder(
+                              itemCount: sortedChats.length,
+                              itemBuilder: (BuildContext ctxt, int index) {
+                                return StreamBuilder(
+                                    stream: DatabaseService()
+                                        .getStream(sortedChats[index]),
+                                    builder: (context, snapshot) {
+                                      if (!snapshot.hasData)
+                                        return Center(
+                                            child: CircularProgressIndicator());
+                                      else {
+                                        user.sortChat();
+                                        Chat chat =
+                                            Chat.fromSnapshot(snapshot.data);
+                                        int receiverInt;
+                                        chat.users[0] ==
+                                                user.reference.documentID
+                                            ? receiverInt = 1
+                                            : receiverInt = 0;
+                                        /*chat.users[0] == user.reference.documentID
+                                          ? receiver = chat.users[1]
+                                          : receiver = chat.users[0];*/
+                                        int lastMessageDate;
+                                        String lastMessage;
+                                        int unreadMessages = 0;
+                                        if (chat.messages != null &&
+                                            chat.messages.length > 0) {
+                                          lastMessage = chat
+                                              .messages[
+                                                  chat.messages.length - 1]
+                                              .message;
+                                          lastMessageDate = chat
+                                              .messages[
+                                                  chat.messages.length - 1]
+                                              .timeStamp;
+                                          chat.messages.forEach((m) {
+                                            if (m.timeStamp >
+                                                chat.lastTimeRead[User.uid])
+                                              unreadMessages++;
                                           });
-                                    }
-                                  });
-                            });
-                      }
-                    }),
-                floatingActionButton: FloatingActionButton(
-                    elevation: 10.0,
-                    child: Icon(Icons.add),
-                    onPressed: () {
-                      Navigator.pushNamed(context, '/newBuddyScreen');
-                    }),
-              );
+                                        } else
+                                          lastMessage = 'New conversation!';
+                                        return StreamBuilder(
+                                            stream: DatabaseService()
+                                                .getUserStream(
+                                                    chat.users[receiverInt]),
+                                            builder: (context, snapshot) {
+                                              if (!snapshot.hasData)
+                                                return Container(
+                                                  height: MediaQuery.of(context)
+                                                      .size
+                                                      .height,
+                                                  child: Scaffold(
+                                                    body: Center(
+                                                        child:
+                                                            CircularProgressIndicator()),
+                                                  ),
+                                                );
+                                              else {
+                                                receiver = User.fromSnapshot(
+                                                    snapshot.data);
+                                                return MessageEntry(
+                                                    receiver,
+                                                    lastMessage,
+                                                    lastMessageDate,
+                                                    chat.reference.documentID,
+                                                    unreadMessages);
+                                              }
+                                            });
+                                      }
+                                    });
+                              });
+                        }
+                      }));
             }
           });
     });

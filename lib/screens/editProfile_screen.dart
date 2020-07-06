@@ -63,6 +63,9 @@ class EditProfileState extends State<EditProfile> {
   @override
   File _profPicture;
   File _backGroundPicture;
+    var name_ = TextEditingController();
+  var birthDate_ = TextEditingController();
+  var _value;
   var bio_ = TextEditingController();
 
 
@@ -87,6 +90,7 @@ class EditProfileState extends State<EditProfile> {
   var _customLabelsHeight;
   var _customImagesize ;
   List<String> futureButtons;
+  DateTime newBirthDate = DateTime.now()  ;
   User user;
   List<String> lang_list= List<String>(11);
   var bool_list=List<bool>(11);
@@ -134,7 +138,7 @@ class EditProfileState extends State<EditProfile> {
                     GestureDetector(
                         child: Row(
                           children: <Widget>[
-                            Icon(Icons.insert_photo, color: Colors.grey[100]),
+                            Icon(Icons.insert_photo, color: Colors.grey),
                             SizedBox(width: 8.0),
                             Text('Gallery'),
                           ],
@@ -157,7 +161,7 @@ class EditProfileState extends State<EditProfile> {
                     GestureDetector(
                         child: Row(
                           children: <Widget>[
-                            Icon(Icons.photo_camera, color: Colors.grey[100]),
+                            Icon(Icons.photo_camera, color: Colors.grey),
                             SizedBox(width: 8.0),
                             Text('Camera'),
                           ],
@@ -239,6 +243,7 @@ class EditProfileState extends State<EditProfile> {
                       new ListView(
                       children: <Widget>[
                         _buildprofile(),
+                        _editInfo(),
                         _buildbio(),
                         _buildlanguages(),
                        _buildInterests(),
@@ -256,6 +261,291 @@ class EditProfileState extends State<EditProfile> {
     );
   }
 
+  void update_user_Birth(){
+    user.update(newBirthDate: newBirthDate.millisecondsSinceEpoch);
+    FocusScope.of(context).unfocus();
+  }
+  void update_user_country(){
+    user.update(newLivingCountry: _value);
+
+  }
+
+  void update_user_name(){
+     user.update(newName: name_.text);
+  }
+
+  void update_all(){
+    if (name_.text != '')
+      update_user_name();
+    if (_value != null)
+      update_user_country();
+    FocusScope.of(context).unfocus();
+  }
+
+  Widget _SaveUpdates(){
+    return Align(
+        alignment: Alignment.center,
+        child : new RaisedButton(
+            onPressed: update_all,
+            color: Colors.black,
+            shape: RoundedRectangleBorder(
+              borderRadius: new BorderRadius.circular(18.0),
+              side: BorderSide(color: Colors.white),
+            ),
+            child : Text(
+              "Update",
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
+            )
+        )
+    );
+  }
+
+Widget _editInfo(){
+    return Card(
+      elevation: 3.0,
+        child: SizedBox(
+        width: _screenWidth,
+        height: _customLabelsHeight + 130.0,
+        child : Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+          children: <Widget>[
+            Wrap(
+              spacing: 10,
+              runSpacing: 10,
+              children: <Widget>[
+                _change_name(),
+                _change_country(),
+                _change_birth(),
+              ],
+            ),
+          ],
+          ),
+        ),
+        ),
+    );
+  }
+
+  Widget _change_name() {
+    return Wrap(
+      children: <Widget>[
+        Padding(
+          padding: const EdgeInsets.fromLTRB(5, 0, 0, 0),
+          child: Text(
+            "Name:",
+            style: TextStyle(
+                fontSize: 24,
+                fontStyle: FontStyle.italic,
+                fontWeight: FontWeight.bold
+            ),
+          ),
+        ),
+        Padding(
+          padding: EdgeInsets.fromLTRB(10, 0, 0, 0),
+          child : TextFormField(
+            decoration: InputDecoration(
+              border: InputBorder.none,
+              hintText: user.name,
+            ),
+            controller: name_,
+            keyboardType: TextInputType.text,
+            style: TextStyle(
+              fontStyle: FontStyle.italic,
+              color: Colors.grey[900],
+              fontSize: 22,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+
+    Widget _change_country(){
+      Widget _edit_country(){
+        return DropdownButton<String>(
+          items: [
+            DropdownMenuItem<String>(
+              child: Row(
+                children: <Widget>[
+                  Icon(Icons.filter_1),
+                  Text('Middle East'),
+                ],
+              ),
+              value: 'Middle East',
+            ),
+            DropdownMenuItem<String>(
+              child: Row(
+                children: <Widget>[
+                  Icon(Icons.filter_2),
+                  Text('China'),
+                ],
+              ),
+              value: 'China',
+            ),
+            DropdownMenuItem<String>(
+              child: Row(
+                children: <Widget>[
+                  Icon(Icons.filter_3),
+                  Text('England'),
+                ],
+              ),
+              value: 'England',
+            ),
+            DropdownMenuItem<String>(
+              child: Row(
+                children: <Widget>[
+                  Icon(Icons.filter_4),
+                  Text('France'),
+                ],
+              ),
+              value: 'France',
+            ),
+            DropdownMenuItem<String>(
+              child: Row(
+                children: <Widget>[
+                  Icon(Icons.filter_5),
+                  Text('India'),
+                ],
+              ),
+              value: 'India',
+            ),
+            DropdownMenuItem<String>(
+              child: Row(
+                children: <Widget>[
+                  Icon(Icons.filter_6),
+                  Text('Italy'),
+                ],
+              ),
+              value: 'Italy',
+            ),
+            DropdownMenuItem<String>(
+              child: Row(
+                children: <Widget>[
+                  Icon(Icons.filter_7),
+                  Text('Japan'),
+                ],
+              ),
+              value: 'Japan',
+            ),
+            DropdownMenuItem<String>(
+              child: Row(
+                children: <Widget>[
+                  Icon(Icons.filter_8),
+                  Text('Germany'),
+                ],
+              ),
+              value: 'Germany',
+            ),
+            DropdownMenuItem<String>(
+              child: Row(
+                children: <Widget>[
+                  Icon(Icons.filter_9),
+                  Text('Other'),
+                ],
+              ),
+              value: 'Other',
+            ),
+          ],
+          isExpanded: false,
+          onChanged: (String value) {
+            setState(() {
+              _value = value;
+            });
+          },
+          hint: Text(user.livingCountry != null ? user.livingCountry : 'Select country'),
+          value: _value,
+          underline: Container(
+            decoration: const BoxDecoration(
+                border: Border(bottom: BorderSide(color: Colors.grey))
+            ),
+          ),
+          style: TextStyle(
+            fontSize: 22,
+            color: Colors.black,
+          ),
+          iconEnabledColor: Colors.pink,
+          //        iconDisabledColor: Colors.grey,
+          iconSize: 30,
+        );
+      }
+      return Column(
+        children: <Widget>[
+          Text(
+            "Living Country:",
+            style: TextStyle(
+                fontSize: 24,
+                fontStyle: FontStyle.italic,
+                fontWeight: FontWeight.bold
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.fromLTRB(5, 0, 0, 0),
+            child : _edit_country(),
+          ),
+        ],
+      );
+  }
+
+  Widget _change_birth() {
+    return Wrap(
+      spacing: 50,
+      runSpacing: 10,
+      children: <Widget>[
+        Text(
+          "Actual birth date: ",
+          style: TextStyle(
+              fontSize: 24,
+              fontStyle: FontStyle.italic,
+              fontWeight: FontWeight.bold
+          ),
+        ),
+        Align(
+          alignment: Alignment(-0.5,0),
+          child: Text("${newBirthDate.toLocal()}".split(' ')[0],
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontStyle: FontStyle.italic,
+            fontSize: 24,
+            ),
+          ),
+        ),
+        Align(
+          alignment: Alignment(0,0),
+          child : RaisedButton(
+            color: Colors.lightBlue,
+            shape: RoundedRectangleBorder(
+              borderRadius: new BorderRadius.circular(18.0),
+              side: BorderSide(color: Colors.black),
+            ),
+          onPressed: () => _selectDate(context),
+          child: Text(
+              'Select date',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+          ),),
+         ),
+        ),
+      ],
+    );
+  }
+
+Future<Null> _selectDate(BuildContext context) async {
+    final DateTime picked = await showDatePicker(
+        context: context,
+        initialDate: newBirthDate,
+        firstDate: DateTime(1960, 1),
+        lastDate: DateTime.now());
+    if (picked != null && picked != newBirthDate)
+      setState(() {
+        newBirthDate = picked;
+        //user.update(newBirthDate: newBirthDate.microsecondsSinceEpoch);
+      });
+  }
+
   Widget _appBar () {
     return new AppBar(
       backgroundColor: Colors.lightBlue,
@@ -268,9 +558,34 @@ class EditProfileState extends State<EditProfile> {
     );
   }
 
+  Widget _completeProfileDialog(String content) {
+    return AlertDialog(
+      title: Text('Complete your profile'),
+      content: Text(content),
+      actions: <Widget>[FlatButton(onPressed: () => Navigator.pop(context), child: Text('Ok'))],
+    );
+  }
+
   void goBack(){
     user.update(newLanguages: studied);
-    Navigator.pop(context);
+    if ((user.name == null || user.name == '') && name_.text == '')
+      showDialog(context: context, builder: (_) => _completeProfileDialog('Please insert your user name.'));
+    else if ((user.livingCountry == null || user.livingCountry == '') && _value == null)
+      showDialog(context: context, builder: (_) => _completeProfileDialog('Please insert the country you live in.'));
+    else if (user.bio == null || user.bio == '')
+      showDialog(context: context, builder: (_) => _completeProfileDialog('Please add a Bio.'));
+    else if (user.languages == null || user.languages.length < 1)
+      showDialog(context: context, builder: (_) => _completeProfileDialog('Please add at leas one of the languages you can speak or want to improve.'));
+    else if (user.interests == null || user.interests.length < 1)
+      showDialog(context: context, builder: (_) => _completeProfileDialog('Please add at leas one of your interest.'));
+    else if (Navigator.canPop(context)) {
+      update_all();
+      Navigator.pop(context);
+    }
+    else {
+      update_all();
+      Navigator.pushNamedAndRemoveUntil(context, '/navigationScreen', (_) => false);
+    }
   }
 
   Widget _buildprofile() {
