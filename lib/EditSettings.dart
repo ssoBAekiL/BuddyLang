@@ -13,6 +13,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:buddylang/services/database.dart';
 import 'package:buddylang/services/storage.dart';
 import 'package:buddylang/utilities/constants.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class EditProfile extends StatefulWidget{
   @override
@@ -67,7 +68,8 @@ class EditProfileState extends State<EditProfile> {
   var bio_ = TextEditingController();
   var name_ = TextEditingController();
   var birthDate_ = TextEditingController();
-  var _value;
+  var _newCountry ;
+  var _newBirthDate =DateTime.now();
 
 
   Future changeProfilePicture() async {
@@ -81,13 +83,12 @@ class EditProfileState extends State<EditProfile> {
   Future<Null> _selectDate(BuildContext context) async {
     final DateTime picked = await showDatePicker(
         context: context,
-        initialDate: newBirthDate,
+        initialDate: _newBirthDate,
         firstDate: DateTime(1960, 1),
         lastDate: DateTime.now());
-    if (picked != null && picked != newBirthDate)
+    if (picked != null && picked != _newBirthDate)
       setState(() {
-        newBirthDate = picked;
-        //user.update(newBirthDate: newBirthDate.microsecondsSinceEpoch);
+        user.update(newBirthDate: picked.microsecondsSinceEpoch);
       });
   }
 
@@ -104,7 +105,6 @@ class EditProfileState extends State<EditProfile> {
   var _customScreenHeight;
   var _customLabelsHeight;
   var _customImagesize ;
-  DateTime newBirthDate = DateTime.now()  ;
 
   List<String> futureButtons;
   User user;
@@ -212,24 +212,11 @@ class EditProfileState extends State<EditProfile> {
     Navigator.of(context).pop();
   }
 
-  _buildDrawerOption(Icon icon, String title, Function onTap) {
-    return ListTile(
-      leading: icon,
-      title: Text(
-        title,
-        style: TextStyle(
-          fontSize: 20.0,
-        ),
-      ),
-      onTap: onTap,
-    );
-  }
-
-
   Widget build(BuildContext context) {
     _screenWidth = MediaQuery.of(context).size.width * 0.94;
     _customScreenHeight= MediaQuery.of(context).size.height * 0.94;
     _customLabelsHeight = MediaQuery.of(context).size.height * 0.25;
+    var attempt ;
     return new Scaffold(
       appBar: _appBar(),
       backgroundColor: Colors.grey,
@@ -250,6 +237,8 @@ class EditProfileState extends State<EditProfile> {
                   bio_.text=user.bio;
                  studied= user.languages;
                  interested=user.interests;
+                 attempt =  DateTime.fromMicrosecondsSinceEpoch(user.birthDate);
+                 print(attempt);
                   //newBirthDate = DateTime.fromMillisecondsSinceEpoch(user.birthDate);
                   return GestureDetector(
                     onTap:  (){
@@ -260,11 +249,19 @@ class EditProfileState extends State<EditProfile> {
                       new ListView(
                       children: <Widget>[
                         _Edit_Info(),
+                        Text(
+                          "Tap below to edit background or profile picture ",
+                          style: TextStyle(
+                            fontSize: 24,
+                            fontStyle: FontStyle.italic,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                         _buildprofile(),
                         _buildbio(),
                         _buildlanguages(),
                        _buildInterests(),
-                       _saveButton(),
+                        _saveButton(),
                        ],
                       ),
                     ],
@@ -399,11 +396,11 @@ class EditProfileState extends State<EditProfile> {
           isExpanded: false,
           onChanged: (String value) {
             setState(() {
-              _value = value;
+              _newCountry = value;
             });
           },
           hint: Text('Select Country'),
-          value: _value,
+          value: _newCountry,
           underline: Container(
             decoration: const BoxDecoration(
                 border: Border(bottom: BorderSide(color: Colors.grey))
@@ -429,7 +426,7 @@ class EditProfileState extends State<EditProfile> {
             ),
           ),
           Padding(
-            padding: EdgeInsets.fromLTRB(10, 0, 0, 0),
+            padding: EdgeInsets.fromLTRB(30, 0, 0, 0),
             child : _edit_country(),
           ),
         ],
@@ -442,7 +439,7 @@ class EditProfileState extends State<EditProfile> {
       runSpacing: 10,
       children: <Widget>[
         Text(
-          "Actual birth date :",
+          "  Actual birth date :",
           style: TextStyle(
               fontSize: 24,
               fontStyle: FontStyle.italic,
@@ -451,7 +448,7 @@ class EditProfileState extends State<EditProfile> {
         ),
         Align(
           alignment: Alignment(-0.5,0),
-          child: Text("${newBirthDate.toLocal()}".split(' ')[0],
+          child: Text("${DateTime.fromMicrosecondsSinceEpoch(user.birthDate).toLocal()}".split(' ')[0],
           style: TextStyle(
             fontWeight: FontWeight.bold,
             fontStyle: FontStyle.italic,
@@ -485,18 +482,26 @@ class EditProfileState extends State<EditProfile> {
   //  FocusScope.of(context).unfocus();
   //}
   void update_user_country(){
-    user.update(newLivingCountry: _value);
-
+    user.update(newLivingCountry: _newCountry);
   }
 
   void update_user_name(){
-     user.update(newName: name_.text);
+    if ( name_.text == "" || name_.text == " " ) print("name is empty");
+    else { print(name_.value); user.update(newName: name_.text);};
   }
 
-  void update_all(){
+  void update_all() {
     update_user_name();
     update_user_country();
     FocusScope.of(context).unfocus();
+    Fluttertoast.showToast(
+      msg: "Done",
+      gravity: ToastGravity.CENTER,
+      timeInSecForIosWeb: 1,
+      backgroundColor: Colors.lightBlue,
+      textColor: Colors.black,
+      fontSize: 16.0,
+    );
   }
 
   Widget _SaveUpdates(){
@@ -525,7 +530,7 @@ class EditProfileState extends State<EditProfile> {
       elevation: 3.0,
         child: SizedBox(
         width: _screenWidth,
-        height: _customLabelsHeight,
+        height: _customLabelsHeight*1.6,
         child : ListView(
         children: <Widget>[
           Wrap(

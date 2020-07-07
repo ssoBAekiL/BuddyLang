@@ -152,7 +152,9 @@ Widget _appBar () {
 }
 
 Widget _Name_year(){
-  return Text( (user.name + "," + user.birthDate.toString()),
+  return Text( (user.name + "," +
+      (DateTime.now().year - (DateTime.fromMicrosecondsSinceEpoch(user.birthDate).year)).toString()),
+  //la riga sopra stampa " anno corrente - anno data di nascita utente" per ottenere l'età attuale
   style: TextStyle(
   fontSize: 32,
   fontStyle: FontStyle.italic,
