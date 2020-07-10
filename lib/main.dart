@@ -1,40 +1,35 @@
-import 'package:buddylang/models/user_data.dart';
+import 'package:buddylang/models/Visualize_Profile_Picture.dart';
+import 'package:buddylang/models/visualizeProfileBackground.dart';
+import 'package:buddylang/screens/editProfile_screen.dart';
 import 'package:buddylang/screens/home_screen.dart';
 import 'package:buddylang/screens/login_screen.dart';
-import 'package:buddylang/services/auth_service.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:buddylang/screens/navigation_screen.dart';
+import 'package:buddylang/screens/new_buddy_screen.dart';
+import 'package:buddylang/screens/profile_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:buddylang/screens/chat_screen.dart';
+import 'package:buddylang/screens/conversations_screen.dart';
+import 'package:buddylang/screens/initial_screen.dart';
 
-void main() => runApp(MultiProvider(providers: [
-      ChangeNotifierProvider(create: (_) => UserData()),
-      Provider<AuthService>(
-        create: (_) => AuthService(),
-      ),
-    ], child: MyApp()));
-
-class MyApp extends StatelessWidget {
-  // aa
-  // This widget is the root of your application.
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'BuddyLang',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primaryColor: Colors.white,
-      ),
-      home: StreamBuilder<FirebaseUser>(
-        stream: Provider.of<AuthService>(context, listen: false).user,
-        builder: (BuildContext context, AsyncSnapshot snapshot) {
-          if (snapshot.hasData) {
-            Provider.of<UserData>(context, listen: false).currentUserId = snapshot.data.uid;
-            return HomeScreen();
-          } else {
-            return LoginScreen();
-          }
-        },
-      ),
-    );
+void main() => runApp(MaterialApp(
+  title: 'BuddyLang',
+  debugShowCheckedModeBanner: false,
+  theme: ThemeData(primaryColor: Colors.white),
+  //initialRoute: '/conversationsScreen',
+  //initialRoute: '/userTestScreen',
+  initialRoute: '/preLogin',
+  routes: {
+    '/chatScreen': (context) => ChatInstance(), // Screen where the messages of a conversation are displayed
+    '/conversationsScreen': (context) => ConversationsScreen(), // Screen where the list of conversations of the user are displayed
+    //'/userTestScreen': (context) => UserTestScreen(),
+    '/loginScreen': (context) => LoginScreen(),
+    '/homeScreen': (context) => HomeScreen(),
+    '/preLogin': (context) => PreLogin(),
+    '/newBuddyScreen': (context) => NewBuddyScreen(),
+    '/profileScreen': (context) => ProfileScreen(),
+    '/navigationScreen': (context) => NavigationScreen(),
+    '/editProfileScreen': (context) => EditProfile(),
+    '/visualizeProfilePictureScreen': (context) => VisualizeProfilePicture(),
+    '/visualizeProfileBackgroundScreen': (context) => VisualizeProfileBackground()
   }
-}
+));
