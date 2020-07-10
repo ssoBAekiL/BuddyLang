@@ -192,8 +192,7 @@ class _LoginScreenState extends State<LoginScreen> {
       } else if (_selectedIndex == 1 &&
           _signupFormKey.currentState.validate()) {
        _signupFormKey.currentState.save();
-       await authService.signup(_name, _email, _password);
-      await _showVerifyEmailSentDialog();
+       authService.signup(_name, _email, _password).then(await _showVerifyEmailSentDialog());
       }
     } on PlatformException catch (err) {
       _showErrorDialog(err.message);
@@ -228,22 +227,20 @@ signOut() {
   _showVerifyEmailSentDialog() {
     showDialog(
       context: context,
-      builder: (BuildContext context) {
+      builder: (_) {
         // return object of type Dialog
         return AlertDialog(
           title: new Text("Verify your account"),
           content:
               new Text("Link to verify account has been sent to your email"),
-          actions: <Widget>[
+          /* actions: <Widget>[
             new FlatButton(
               child: new Text("Dismiss"),
               onPressed: () {
-                
-               Navigator.of(context).pop();
-                
+                Navigator.pop(context);
               },
             ),
-          ],
+          ],*/
         );
       },
     );

@@ -231,7 +231,7 @@ class EditProfileState extends State<EditProfile> {
                   );
                 else {
                   user = User.fromSnapshot(snapshot.data);
-                  bio_.text=user.bio;
+                  //bio_.text=user.bio;
                  studied= user.languages;
                  interested=user.interests;
                   return GestureDetector(
@@ -275,6 +275,8 @@ class EditProfileState extends State<EditProfile> {
   }
 
   void update_all(){
+    if (bio_.text != '')
+      user.update(newBio: bio_.text);
     if (name_.text != '')
       update_user_name();
     if (_value != null)
@@ -308,20 +310,14 @@ Widget _editInfo(){
       elevation: 3.0,
         child: SizedBox(
         width: _screenWidth,
-        height: _customLabelsHeight + 130.0,
+        height: _customLabelsHeight + 110.0,
         child : Padding(
           padding: const EdgeInsets.all(8.0),
           child: Column(
           children: <Widget>[
-            Wrap(
-              spacing: 10,
-              runSpacing: 10,
-              children: <Widget>[
-                _change_name(),
-                _change_country(),
-                _change_birth(),
-              ],
-            ),
+            _change_name(),
+            _change_country(),
+            _change_birth(),
           ],
           ),
         ),
@@ -330,7 +326,8 @@ Widget _editInfo(){
   }
 
   Widget _change_name() {
-    return Wrap(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: <Widget>[
         Padding(
           padding: const EdgeInsets.fromLTRB(5, 0, 0, 0),
@@ -341,22 +338,21 @@ Widget _editInfo(){
                 fontStyle: FontStyle.italic,
                 fontWeight: FontWeight.bold
             ),
+            textAlign: TextAlign.center,
           ),
         ),
-        Padding(
-          padding: EdgeInsets.fromLTRB(10, 0, 0, 0),
-          child : TextFormField(
-            decoration: InputDecoration(
-              border: InputBorder.none,
-              hintText: user.name,
-            ),
-            controller: name_,
-            keyboardType: TextInputType.text,
-            style: TextStyle(
-              fontStyle: FontStyle.italic,
-              color: Colors.grey[900],
-              fontSize: 22,
-            ),
+        TextFormField(
+          textAlign: TextAlign.center,
+          decoration: InputDecoration(
+            border: InputBorder.none,
+            hintText: user.name,
+          ),
+          controller: name_,
+          keyboardType: TextInputType.text,
+          style: TextStyle(
+            fontStyle: FontStyle.italic,
+            color: Colors.grey[900],
+            fontSize: 22,
           ),
         ),
       ],
@@ -481,6 +477,7 @@ Widget _editInfo(){
                 fontStyle: FontStyle.italic,
                 fontWeight: FontWeight.bold
             ),
+            textAlign: TextAlign.center,
           ),
           Padding(
             padding: EdgeInsets.fromLTRB(5, 0, 0, 0),
@@ -491,44 +488,41 @@ Widget _editInfo(){
   }
 
   Widget _change_birth() {
-    return Wrap(
-      spacing: 50,
-      runSpacing: 10,
+    return Column(
       children: <Widget>[
+        SizedBox(height: 10.0),
         Text(
-          "Actual birth date: ",
+          "Birth date: ",
           style: TextStyle(
               fontSize: 24,
               fontStyle: FontStyle.italic,
               fontWeight: FontWeight.bold
           ),
+          textAlign: TextAlign.center,
         ),
-        Align(
-          alignment: Alignment(-0.5,0),
-          child: Text("${newBirthDate.toLocal()}".split(' ')[0],
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontStyle: FontStyle.italic,
-            fontSize: 24,
-            ),
+        SizedBox(height: 5.0),
+        Text("${newBirthDate.toLocal()}".split(' ')[0],
+        style: TextStyle(
+          fontStyle: FontStyle.italic,
+          color: Colors.grey[900],
+          fontSize: 22,
           ),
+          textAlign: TextAlign.center,
         ),
-        Align(
-          alignment: Alignment(0,0),
-          child : RaisedButton(
-            color: Colors.lightBlue,
-            shape: RoundedRectangleBorder(
-              borderRadius: new BorderRadius.circular(18.0),
-              side: BorderSide(color: Colors.black),
-            ),
-          onPressed: () => _selectDate(context),
-          child: Text(
-              'Select date',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-          ),),
+        SizedBox(height: 5.0),
+        RaisedButton(
+          color: Colors.grey[200],
+          shape: RoundedRectangleBorder(
+            borderRadius: new BorderRadius.circular(18.0),
+            side: BorderSide(color: Colors.black),
+          ),
+        onPressed: () => _selectDate(context),
+        child: Text(
+            'Change date',
+        style: TextStyle(
+          fontWeight: FontWeight.bold,
+        ),),
          ),
-        ),
       ],
     );
   }
@@ -572,7 +566,7 @@ Future<Null> _selectDate(BuildContext context) async {
       showDialog(context: context, builder: (_) => _completeProfileDialog('Please insert your user name.'));
     else if ((user.livingCountry == null || user.livingCountry == '') && _value == null)
       showDialog(context: context, builder: (_) => _completeProfileDialog('Please insert the country you live in.'));
-    else if (user.bio == null || user.bio == '')
+    else if (bio_.text == null || bio_.text == '')
       showDialog(context: context, builder: (_) => _completeProfileDialog('Please add a Bio.'));
     else if (user.languages == null || user.languages.length < 1)
       showDialog(context: context, builder: (_) => _completeProfileDialog('Please add at leas one of the languages you can speak or want to improve.'));
@@ -732,6 +726,7 @@ Future<Null> _selectDate(BuildContext context) async {
                       height: _customLabelsHeight,
                       child : TextField(
                         decoration: InputDecoration(
+                          hintText: user.bio == null ? 'Enter your bio...' : user.bio,
                           border:InputBorder.none,
                         ),
                         controller: bio_,
@@ -739,20 +734,6 @@ Future<Null> _selectDate(BuildContext context) async {
                         keyboardType: TextInputType.multiline,
                       ),
                      ),
-                    ),
-                    Align(
-                      alignment: Alignment(0.96,0.0),
-                        child : Container(
-                            width: 40,
-                            height: 40,
-                            child : FloatingActionButton(
-                              onPressed: func,
-                              child: Icon(
-                                Icons.send,
-                                size: 20.0,
-                              ),
-                            )
-                        ),
                     ),
                   ],
                 ),

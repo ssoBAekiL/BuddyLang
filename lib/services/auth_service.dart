@@ -39,11 +39,7 @@ class AuthService implements BaseAuth {
       );
       if (authResult.user != null) {
         String token = await _messaging.getToken();
-        usersRef.document(authResult.user.uid).setData({
-          'name': name,
-          'email': email,
-          'token': token,
-        });
+        usersRef.document(authResult.user.uid).setData(User(name, token: token).toJson());
 
         //isEmailVerified();
 

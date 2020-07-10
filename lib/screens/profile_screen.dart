@@ -613,7 +613,7 @@ Widget _nameYear(){
 
   void logOut() {
     AuthService().signOut();
-    Navigator.of(context).pushNamedAndRemoveUntil(
-      '/login', (Route<dynamic> route) => false);
+    Navigator.of(context).popAndPushNamed(
+      '/preLogin');
   }
 }

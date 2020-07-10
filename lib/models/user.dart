@@ -27,7 +27,19 @@ class User {
   /*  Constructor of the User object, only name parameter is mandatory      */
   /*  since when a new user registers a first insance of the user is saved  */
   /*  in the databes only with that information                             */
-  User(this.name, {this.token, this.bio, this.chats, this.reference, this.birthDate, this.livingCountry, this.interests, this.languages, this.profileImageUrl, this.backgroundImageUrl});
+  User(this.name, {this.token, this.bio, this.chats, this.reference, this.birthDate, this.livingCountry, this.interests, this.languages, this.profileImageUrl, this.backgroundImageUrl}) {
+    if (token == null)
+      this.token = '';
+    if (livingCountry == null)
+      this.livingCountry = '';
+    if (interests == null)
+      this.interests = [];
+    if (languages == null)
+      this.languages = [];
+    if (chats == null)
+      this.chats = [];
+
+  }
 
   /*  factory that buids a User object from the */
   /*  json data returned by Firestore           */
@@ -203,5 +215,6 @@ Map<String, dynamic> _userToJson(User instance) =>
     'languages': instance.languages,
     'chats': instance.chats,
     'profileImageUrl': instance.profileImageUrl,
-    'backgroundImageUrl': instance.backgroundImageUrl
+    'backgroundImageUrl': instance.backgroundImageUrl,
+    'token': instance.token
   };
