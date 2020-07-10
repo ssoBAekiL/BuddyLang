@@ -6,12 +6,10 @@ import 'package:buddylang/screens/login_screen.dart';
 import 'package:buddylang/screens/navigation_screen.dart';
 import 'package:buddylang/screens/new_buddy_screen.dart';
 import 'package:buddylang/screens/profile_screen.dart';
-import 'package:buddylang/screens/user_test_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:buddylang/screens/chat_screen.dart';
 import 'package:buddylang/screens/conversations_screen.dart';
 import 'package:buddylang/screens/initial_screen.dart';
-import 'package:flutter/services.dart';
 
 void main() => runApp(MaterialApp(
   title: 'BuddyLang',
