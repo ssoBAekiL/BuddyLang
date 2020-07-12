@@ -73,7 +73,8 @@ class _NewBuddyScreenState extends State<NewBuddyScreen> {
       buddys.removeWhere((buddy) => buddy.reference.documentID == User.uid);
       return DatabaseService().getUser(User.uid).then((snapshot) {
         User self = User.fromSnapshot(snapshot);
-        buddys.removeWhere((buddy) => self.buddys.contains(buddy.reference.documentID));
+        buddys.removeWhere(
+            (buddy) => self.buddys.contains(buddy.reference.documentID));
 
         if (buddys.length == 0)
           return null;
@@ -103,7 +104,13 @@ class _NewBuddyScreenState extends State<NewBuddyScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-            title: Text('Find new buddy'),
+            title: Text(
+              'Find new buddy',
+              style: TextStyle(
+                  color: Colors.white,
+                  fontStyle: FontStyle.italic,
+                  fontSize: 28),
+            ),
             centerTitle: true,
             backgroundColor: Colors.lightBlue[600]),
         backgroundColor: Colors.grey[100],
@@ -117,32 +124,42 @@ class _NewBuddyScreenState extends State<NewBuddyScreen> {
               else {
                 user = User.fromSnapshot(snapshot.data);
                 return Center(
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(35.0, 0, 35.0, 0.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: <Widget>[
-                        SizedBox(height: 10.0),
-                        Container(
-                          padding: EdgeInsets.all(8),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: <Widget>[
+                      SizedBox(height: 10.0),
+                      Padding(
+                        padding: const EdgeInsets.all(10.0),
+                        child: Container(
+                          padding: EdgeInsets.fromLTRB(1.0, 10.0, 1.0, 10.0),
                           decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(10),
-                              color: Colors.lightBlue),
+                              color: Colors.white),
                           child: Center(
                             child: Text(
-                              'Find a buddy and\nstart a new conversation',
+                              'Choose the language you want to practice\n\n' +
+                                  'Choose the topic you want to discus\n\n' +
+                                  'Get ready for a new amazing conversation!',
                               textAlign: TextAlign.center,
                               style: TextStyle(
-                                fontSize: 24.0,
+                                fontSize: 20.0,
                               ),
                             ),
                           ),
                         ),
-                        SizedBox(height: 60.0),
-                        Text('Language in common:',
+                      ),
+                      SizedBox(height: 10.0),
+                      Padding(
+                        padding:
+                            const EdgeInsets.fromLTRB(50.0, 0.0, 50.0, 0.0),
+                        child: Text('Language:',
                             style: TextStyle(fontSize: 20.0)),
-                        DropdownButton<String>(
+                      ),
+                      Padding(
+                        padding:
+                            const EdgeInsets.fromLTRB(50.0, 0.0, 50.0, 0.0),
+                        child: DropdownButton<String>(
                           isExpanded: true,
                           value: _dropdownLanguage,
                           icon: Icon(Icons.arrow_downward),
@@ -167,10 +184,18 @@ class _NewBuddyScreenState extends State<NewBuddyScreen> {
                             );
                           }).toList(),
                         ),
-                        SizedBox(height: 10.0),
-                        Text('Main interest:',
+                      ),
+                      SizedBox(height: 10.0),
+                      Padding(
+                        padding:
+                            const EdgeInsets.fromLTRB(50.0, 0.0, 50.0, 0.0),
+                        child: Text('Interest:',
                             style: TextStyle(fontSize: 20.0)),
-                        DropdownButton<String>(
+                      ),
+                      Padding(
+                        padding:
+                            const EdgeInsets.fromLTRB(50.0, 0.0, 50.0, 0.0),
+                        child: DropdownButton<String>(
                           isExpanded: true,
                           value: _dropdownInterest,
                           icon: Icon(Icons.arrow_downward),
@@ -195,14 +220,21 @@ class _NewBuddyScreenState extends State<NewBuddyScreen> {
                             );
                           }).toList(),
                         ),
-                        Center(
-                          child: RaisedButton(
-                              color: Colors.lightBlue[500],
-                              child: Text('Search'),
-                              onPressed: () => _searchBuddy(context)),
-                        )
-                      ],
-                    ),
+                      ),
+                      Center(
+                        child: RaisedButton(
+                            color: Colors.lightBlue[500],
+                            child: Text('New buddy!'),
+                            onPressed: () => _searchBuddy(context)),
+                      ),
+                      Expanded(
+                        child: Align(
+                          child: Image(
+                              image: AssetImage('assets/images/buddys.png')),
+                          alignment: FractionalOffset.bottomCenter,
+                        ),
+                      )
+                    ],
                   ),
                 );
               }
