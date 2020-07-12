@@ -73,7 +73,7 @@ class Chat {
     lastTimeRead = {};
     users.forEach((uid) => lastTimeRead[uid] = 0);
     await DatabaseService().createChat(this).then((chatId) {
-      users.forEach((u) => DatabaseService().addChatToUser(u, chatId.documentID));
+      users.forEach((u) => DatabaseService().addChatToUser(u, chatId.documentID, users[0] == u ? users[1] : users[0]));
       id = chatId.documentID;
     });
   return id;

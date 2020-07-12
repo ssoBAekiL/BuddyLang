@@ -20,6 +20,7 @@ class User {
   List<String> interests = [];
   List<String> languages = [];
   List<String> chats = [];
+  List<String> buddys = [];
 
 
   DocumentReference reference; // Reference to the firebase snapshot
@@ -27,7 +28,7 @@ class User {
   /*  Constructor of the User object, only name parameter is mandatory      */
   /*  since when a new user registers a first insance of the user is saved  */
   /*  in the databes only with that information                             */
-  User(this.name, {this.token, this.bio, this.chats, this.reference, this.birthDate, this.livingCountry, this.interests, this.languages, this.profileImageUrl, this.backgroundImageUrl}) {
+  User(this.name, {this.token, this.bio, this.chats, this.reference, this.birthDate, this.livingCountry, this.interests, this.languages, this.profileImageUrl, this.backgroundImageUrl, this.buddys}) {
     if (token == null)
       this.token = '';
     if (livingCountry == null)
@@ -38,6 +39,8 @@ class User {
       this.languages = [];
     if (chats == null)
       this.chats = [];
+    if (buddys == null)
+      this.buddys = [];
 
   }
 
@@ -159,7 +162,8 @@ User _userFromJson(Map<dynamic, dynamic> json) {
     languages: _convertLanguages(json['languages'] as List),
     chats: _convertChats(json['chats'] as List),
     profileImageUrl: json['profileImageUrl'] as String,
-    backgroundImageUrl: json['backgroundImageUrl'] as String
+    backgroundImageUrl: json['backgroundImageUrl'] as String,
+    buddys: _convertBuddys(json['buddys'] as List)
     );
 }
 
@@ -174,6 +178,17 @@ List<String> _convertChats(List chatsMap) {
   chatsMap.forEach((c) {chats.add(c);});
 
   return chats;
+}
+
+List<String> _convertBuddys(List buddysMap) {
+  // User might be new and no data avaliable
+  if (buddysMap == null) {
+    return null;
+  }
+  List<String> buddys = List<String>();
+  buddysMap.forEach((c) {buddys.add(c);});
+
+  return buddys;
 }
 
 /*  Private method thar instantiates String objects from json Map  */
@@ -216,5 +231,6 @@ Map<String, dynamic> _userToJson(User instance) =>
     'chats': instance.chats,
     'profileImageUrl': instance.profileImageUrl,
     'backgroundImageUrl': instance.backgroundImageUrl,
+    'buddys': instance.buddys,
     'token': instance.token
   };

@@ -1,5 +1,4 @@
 import 'dart:math';
-
 import 'package:buddylang/models/chat.dart';
 import 'package:buddylang/models/user.dart';
 import 'package:buddylang/screens/navigation_screen.dart';
@@ -49,44 +48,53 @@ class _NewBuddyScreenState extends State<NewBuddyScreen> {
       DatabaseService()
           .getNewBuddy(_dropdownLanguage)
           .then((QuerySnapshot users) {
-        User u = _buddySelection(users);
-        if (u != null) {
-          // Chat([User.uid, u.reference.documentID]).saveNewChat();
-          setState(() {
-            NavigationScreen.currentIndex = 1;
-          });
-          Navigator.pushNamed(context, '/profileScreen', arguments: {'uid': u.reference.documentID, 'edit': false, 'newBuddy': true});
-        }
-        else
-          _showNotFoundAlert(context);
+        _buddySelection(users).then((newBuddy) {
+          if (newBuddy != null) {
+            // Chat([User.uid, u.reference.documentID]).saveNewChat();
+            setState(() {
+              NavigationScreen.currentIndex = 1;
+            });
+            Navigator.pushNamed(context, '/profileScreen', arguments: {
+              'uid': newBuddy.reference.documentID,
+              'edit': false,
+              'newBuddy': true
+            });
+          } else
+            _showNotFoundAlert(context);
+        });
       });
   }
 
-  User _buddySelection(QuerySnapshot users) {
+  Future<User> _buddySelection(QuerySnapshot users) {
     List<User> buddys = [];
     User newBuddy;
     if (users.documents.isNotEmpty) {
       users.documents.forEach((u) => buddys.add(User.fromSnapshot(u)));
       buddys.removeWhere((buddy) => buddy.reference.documentID == User.uid);
-      if (buddys.length == 0)
-        return null;
-      else if (buddys.length == 1)
-        newBuddy = buddys[0];
-      else if (_dropdownInterest != null) {
-        if (buddys
-                .where((buddy) => buddy.interests.contains(_dropdownInterest))
-                .toList()
-                .length >
-            0) {
-          buddys.removeWhere(
-              (buddy) => buddy.interests.contains(_dropdownInterest) == false);
+      return DatabaseService().getUser(User.uid).then((snapshot) {
+        User self = User.fromSnapshot(snapshot);
+        buddys.removeWhere((buddy) => self.buddys.contains(buddy.reference.documentID));
+
+        if (buddys.length == 0)
+          return null;
+        else if (buddys.length == 1)
+          newBuddy = buddys[0];
+        else if (_dropdownInterest != null) {
+          if (buddys
+                  .where((buddy) => buddy.interests.contains(_dropdownInterest))
+                  .toList()
+                  .length >
+              0) {
+            buddys.removeWhere((buddy) =>
+                buddy.interests.contains(_dropdownInterest) == false);
+          }
         }
-      }
-      if (buddys.length > 1)
-        newBuddy = buddys[Random().nextInt(buddys.length)];
-      else
-        newBuddy = buddys[0];
-      return newBuddy;
+        if (buddys.length > 1)
+          newBuddy = buddys[Random().nextInt(buddys.length)];
+        else
+          newBuddy = buddys[0];
+        return newBuddy;
+      });
     }
     return null;
   }

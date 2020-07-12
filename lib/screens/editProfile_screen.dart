@@ -566,7 +566,7 @@ Future<Null> _selectDate(BuildContext context) async {
       showDialog(context: context, builder: (_) => _completeProfileDialog('Please insert your user name.'));
     else if ((user.livingCountry == null || user.livingCountry == '') && _value == null)
       showDialog(context: context, builder: (_) => _completeProfileDialog('Please insert the country you live in.'));
-    else if (bio_.text == null || bio_.text == '')
+    else if ((bio_.text == null || bio_.text == '') && (user.bio == null || user.bio == ''))
       showDialog(context: context, builder: (_) => _completeProfileDialog('Please add a Bio.'));
     else if (user.languages == null || user.languages.length < 1)
       showDialog(context: context, builder: (_) => _completeProfileDialog('Please add at leas one of the languages you can speak or want to improve.'));

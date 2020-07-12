@@ -57,8 +57,11 @@ class DatabaseService {
     return usersCollectionRefernece.where('languages', arrayContains: language).getDocuments();
   }
 
-  void addChatToUser(String uid, String chatId) {
-    usersCollectionRefernece.document(uid).updateData({"chats": FieldValue.arrayUnion([chatId])});
+  void addChatToUser(String uid, String chatId, String user) {
+    usersCollectionRefernece.document(uid).updateData({
+      "chats": FieldValue.arrayUnion([chatId]),
+      'buddys': FieldValue.arrayUnion([user])
+    });
   }
 
   Future<DocumentSnapshot> getUser(String uid) {
