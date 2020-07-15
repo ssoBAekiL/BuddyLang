@@ -116,7 +116,6 @@ class AuthService implements BaseAuth {
 
   @override
   Future<void> googleSignUp() async {
-    String bio;
     try {
       final GoogleSignIn _googleSignIn = GoogleSignIn(
         scopes: ['email'],
@@ -138,7 +137,6 @@ class AuthService implements BaseAuth {
         usersRef.document(user.uid).updateData({
           'name': user.displayName,
           'email': user.email,
-          //'bio': bio,
           'token': token,
         });
       }
@@ -158,7 +156,6 @@ class AuthService implements BaseAuth {
 
   @override
   Future<void> signUpWithFacebook() async {
-    String bio;
     try {
       var facebookLogin = new FacebookLogin();
       var result = await facebookLogin.logIn(['email']);
@@ -169,11 +166,10 @@ class AuthService implements BaseAuth {
         );
         final FirebaseUser user =
             (await FirebaseAuth.instance.signInWithCredential(credential)).user;
-        if (user == null) {
-          usersRef.document(user.uid).setData({
+        if (user != null) {
+          usersRef.document(user.uid).updateData({
             'name': user.displayName,
             'email': user.email,
-            'bio': bio,
           });
         }
 
