@@ -1,3 +1,8 @@
+/******************************/
+/*          BuddyLang         */
+/*  Author: Pablo Borrelli    */
+/******************************/
+
 import 'package:buddylang/screens/conversations_screen.dart';
 import 'package:buddylang/screens/new_buddy_screen.dart';
 import 'package:buddylang/screens/profile_screen.dart';
@@ -51,6 +56,10 @@ class _NavigationScreenState extends State<NavigationScreen> {
 
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setPreferredOrientations([
+        DeviceOrientation.portraitUp,
+        DeviceOrientation.portraitDown,
+      ]);
     return WillPopScope(
       onWillPop: _onBackPressed,
       child: Scaffold(
@@ -59,7 +68,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
             type: BottomNavigationBarType.fixed,
             currentIndex: NavigationScreen.currentIndex,
             selectedItemColor: Colors.black,
-            backgroundColor: Colors.lightBlue[600],
+            backgroundColor: Color(0xFF73AEF5),
             items: [
               BottomNavigationBarItem(
                   icon: Icon(Icons.person), title: Text('Profile')),

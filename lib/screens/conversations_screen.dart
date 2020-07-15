@@ -1,3 +1,8 @@
+/******************************/
+/*          BuddyLang         */
+/*  Author: Pablo Borrelli    */
+/******************************/
+
 import 'package:flutter/material.dart';
 import 'package:buddylang/models/user.dart';
 import 'package:buddylang/models/chat.dart';
@@ -51,7 +56,7 @@ class _ConversationsScreenState extends State<ConversationsScreen> {
               user = User.fromSnapshot(snapshot.data);
               return Scaffold(
                   appBar: AppBar(
-                    backgroundColor: Colors.lightBlue,
+                    backgroundColor: Color(0xFF73AEF5),
                     title: Text(
                       'BuddyLang',
                       style: TextStyle(

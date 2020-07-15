@@ -1,3 +1,8 @@
+/******************************/
+/*          BuddyLang         */
+/*  Author: Pablo Borrelli    */
+/******************************/
+
 import 'package:buddylang/utilities/constants.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
@@ -71,7 +76,7 @@ class _ChatInstanceState extends State<ChatInstance> {
                               maxLines: 1,
                               softWrap: false),
                           centerTitle: true,
-                          backgroundColor: Colors.lightBlue[600],
+                          backgroundColor: Color(0xFF73AEF5),
                           actions: <Widget>[
                             Padding(
                               padding:
@@ -199,7 +204,7 @@ class _ChatInstanceState extends State<ChatInstance> {
                                         ),
                                         SizedBox(width: 10.0),
                                         RaisedButton(
-                                          color: Colors.lightBlue,
+                                          color: Color(0xFF73AEF5),
                                           shape: RoundedRectangleBorder(
                                             borderRadius:
                                                 new BorderRadius.circular(18.0),

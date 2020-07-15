@@ -1,3 +1,8 @@
+/******************************/
+/*          BuddyLang         */
+/*  Author: Pablo Borrelli    */
+/******************************/
+
 import 'package:buddylang/models/user.dart';
 import 'package:buddylang/utilities/constants.dart';
 import 'package:cached_network_image/cached_network_image.dart';

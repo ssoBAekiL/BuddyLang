@@ -4,6 +4,11 @@
 /*  Last updated: 29/05/2020  */
 /******************************/
 
+/******************************/
+/*          BuddyLang         */
+/*  Author: Pablo Borrelli    */
+/******************************/
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:buddylang/services/database.dart';
 import 'package:buddylang/models/chat.dart';

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:buddylang/models/user.dart';
 import 'package:buddylang/utilities/constants.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -8,7 +9,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 
 abstract class BaseAuth {
   Future<void> signup(String name, String email, String password);
-  Future<void> login(String email, String password);
+  Future<bool> login(String email, String password);
   Future<void> sendEmailVerification();
   Future<bool> isEmailVerified();
   Future<void> googleSignUp();
@@ -37,19 +38,17 @@ class AuthService implements BaseAuth {
         email: email,
         password: password,
       );
+
       if (authResult.user != null) {
         String token = await _messaging.getToken();
-        usersRef.document(authResult.user.uid).setData(User(name, token: token).toJson());
-
-        //isEmailVerified();
-
-        //authService.isEmailVerified();
-
+        usersRef.document(authResult.user.uid).setData({
+          'name': name,
+          'email': email,
+          'token': token,
+        });
         if (!authResult.user.isEmailVerified) await sendEmailVerification();
         return signOut();
       }
-      //  await signOut();
-
     } on PlatformException catch (err) {
       throw (err);
     }
@@ -62,9 +61,22 @@ class AuthService implements BaseAuth {
   }
 
   @override
-  Future<void> login(String email, String password) async {
+  Future<bool> isEmailVerified() async {
+    FirebaseUser user = await _auth.currentUser();
+    return user.isEmailVerified;
+  }
+
+  @override
+  Future<bool> login(String email, String password) async {
     try {
-      await _auth.signInWithEmailAndPassword(email: email, password: password);
+      AuthResult authResult = await _auth.signInWithEmailAndPassword(
+          email: email, password: password);
+      if (!authResult.user.isEmailVerified) {
+        signOut();
+        return false;
+      } else {
+        return true;
+      }
     } on PlatformException catch (err) {
       throw (err);
     }
@@ -91,6 +103,7 @@ class AuthService implements BaseAuth {
     await removeToken();
     Future.wait([
       _auth.signOut(),
+      FacebookLogin().logOut(),
     ]);
   }
 
@@ -103,6 +116,7 @@ class AuthService implements BaseAuth {
 
   @override
   Future<void> googleSignUp() async {
+    String bio;
     try {
       final GoogleSignIn _googleSignIn = GoogleSignIn(
         scopes: ['email'],
@@ -117,12 +131,20 @@ class AuthService implements BaseAuth {
         accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
       );
-
+      String token = await _messaging.getToken();
       final FirebaseUser user =
           (await _auth.signInWithCredential(credential)).user;
+      if (user.uid != null) {
+        usersRef.document(user.uid).updateData({
+          'name': user.displayName,
+          'email': user.email,
+          //'bio': bio,
+          'token': token,
+        });
+      }
       print("signed in " + user.displayName);
 
-      return user;
+      return user.displayName;
     } catch (e) {
       print(e.message);
     }
@@ -131,10 +153,12 @@ class AuthService implements BaseAuth {
   @override
   Future<void> signOut() async {
     await _auth.signOut();
+    await FacebookLogin().logOut();
   }
 
   @override
   Future<void> signUpWithFacebook() async {
+    String bio;
     try {
       var facebookLogin = new FacebookLogin();
       var result = await facebookLogin.logIn(['email']);
@@ -145,10 +169,17 @@ class AuthService implements BaseAuth {
         );
         final FirebaseUser user =
             (await FirebaseAuth.instance.signInWithCredential(credential)).user;
+        if (user == null) {
+          usersRef.document(user.uid).setData({
+            'name': user.displayName,
+            'email': user.email,
+            'bio': bio,
+          });
+        }
 
         print('signed in ' + user.displayName);
-
-        return user;
+        //user.sendEmailVerification();
+        return user.uid;
       }
     } catch (e) {
       print(e.message);
@@ -167,11 +198,5 @@ class AuthService implements BaseAuth {
             .setData({'token': token}, merge: true);
       }
     }
-  }
-
-  @override
-  Future<bool> isEmailVerified() async {
-    FirebaseUser user = await _auth.currentUser();
-    return user.isEmailVerified;
   }
 }

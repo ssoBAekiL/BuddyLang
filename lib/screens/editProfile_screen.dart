@@ -310,14 +310,14 @@ Widget _editInfo(){
       elevation: 3.0,
         child: SizedBox(
         width: _screenWidth,
-        height: _customLabelsHeight + 110.0,
+        height: _customLabelsHeight + 20.0,
         child : Padding(
           padding: const EdgeInsets.all(8.0),
           child: Column(
           children: <Widget>[
             _change_name(),
             _change_country(),
-            _change_birth(),
+            //_change_birth(),
           ],
           ),
         ),
@@ -440,6 +440,15 @@ Widget _editInfo(){
               child: Row(
                 children: <Widget>[
                   Icon(Icons.filter_9),
+                  Text('Spain'),
+                ],
+              ),
+              value: 'Spain',
+            ),
+            DropdownMenuItem<String>(
+              child: Row(
+                children: <Widget>[
+                  Icon(Icons.filter_9_plus),
                   Text('Other'),
                 ],
               ),
@@ -542,7 +551,7 @@ Future<Null> _selectDate(BuildContext context) async {
 
   Widget _appBar () {
     return new AppBar(
-      backgroundColor: Colors.lightBlue,
+      backgroundColor: Color(0xFF73AEF5),
       title: Text(
         'Edit Profile',
         style : TextStyle(color: Colors.white,
@@ -626,7 +635,7 @@ Future<Null> _selectDate(BuildContext context) async {
                       placeholder: (context, url) => SizedBox(
                           width: 80.0,
                           height: 80.0,
-                          child: CircularProgressIndicator()),
+                          child: null),
                       errorWidget: (context, url, error) =>
                           Icon(Icons.error),
                     ),
@@ -764,7 +773,7 @@ Future<Null> _selectDate(BuildContext context) async {
             padding: EdgeInsets.fromLTRB(0, 8, 0, 0),
             child: SizedBox(
               width: _screenWidth,
-              height: MediaQuery.of(context).size.height*0.23,
+              height: MediaQuery.of(context).size.height*0.27,
               child: Card(
                 elevation: 3.0,
                 child: Align(
@@ -787,7 +796,7 @@ Future<Null> _selectDate(BuildContext context) async {
      children: <Widget>[
       // number 0 : Arabian
       Container(
-      width: 125,
+      width: 140,
       height: 20,
       child: Row(
         children: <Widget>[
@@ -813,7 +822,7 @@ Future<Null> _selectDate(BuildContext context) async {
     ),
        //number 1
        Container(
-         width: 125,
+         width: 140,
          height: 20,
          child: Row(
            children: <Widget>[
@@ -839,7 +848,7 @@ Future<Null> _selectDate(BuildContext context) async {
        ),
        //number 2
        Container(
-         width: 125,
+         width: 140,
          height: 20,
          child: Row(
            children: <Widget>[
@@ -865,7 +874,7 @@ Future<Null> _selectDate(BuildContext context) async {
        ),
        //number 3
        Container(
-         width: 125,
+         width: 140,
          height: 20,
          child: Row(
            children: <Widget>[
@@ -891,7 +900,7 @@ Future<Null> _selectDate(BuildContext context) async {
        ),
        //number 4
        Container(
-         width: 125,
+         width: 140,
          height: 20,
          child: Row(
            children: <Widget>[
@@ -917,7 +926,7 @@ Future<Null> _selectDate(BuildContext context) async {
        ),
        //number 5
        Container(
-         width: 125,
+         width: 140,
          height: 20,
          child: Row(
            children: <Widget>[
@@ -943,7 +952,7 @@ Future<Null> _selectDate(BuildContext context) async {
        ),
        //number 6
        Container(
-         width: 125,
+         width: 140,
          height: 20,
          child: Row(
            children: <Widget>[
@@ -969,7 +978,7 @@ Future<Null> _selectDate(BuildContext context) async {
        ),
        //number 7
        Container(
-         width: 125,
+         width: 140,
          height: 20,
          child: Row(
            children: <Widget>[
@@ -995,7 +1004,7 @@ Future<Null> _selectDate(BuildContext context) async {
        ),
        //number 8
        Container(
-         width: 135,
+         width: 140,
          height: 20,
          child: Row(
            children: <Widget>[
@@ -1021,7 +1030,7 @@ Future<Null> _selectDate(BuildContext context) async {
        ),
        //number 9
        Container(
-         width: 125,
+         width: 140,
          height: 20,
          child: Row(
            children: <Widget>[
@@ -1047,7 +1056,7 @@ Future<Null> _selectDate(BuildContext context) async {
        ),
        //number 10
        Container(
-         width: 125,
+         width: 140,
          height: 20,
          child: Row(
            children: <Widget>[
@@ -1142,7 +1151,7 @@ Future<Null> _selectDate(BuildContext context) async {
       children: <Widget>[
       // number 0 : Sport
       Container(
-      width: 135,
+      width: 140,
       height: 20,
       child: Row(
         children: <Widget>[
@@ -1194,7 +1203,7 @@ Future<Null> _selectDate(BuildContext context) async {
         ),
         //number 2
         Container(
-          width: 125,
+          width: 140,
           height: 20,
           child: Row(
             children: <Widget>[
@@ -1220,7 +1229,7 @@ Future<Null> _selectDate(BuildContext context) async {
         ),
         //number 3
         Container(
-          width: 125,
+          width: 140,
           height: 20,
           child: Row(
             children: <Widget>[
@@ -1246,7 +1255,7 @@ Future<Null> _selectDate(BuildContext context) async {
         ),
         //number 4
         Container(
-          width: 125,
+          width: 140,
           height: 20,
           child: Row(
             children: <Widget>[
@@ -1272,7 +1281,7 @@ Future<Null> _selectDate(BuildContext context) async {
         ),
         //number 5
         Container(
-          width: 125,
+          width: 140,
           height: 20,
           child: Row(
             children: <Widget>[

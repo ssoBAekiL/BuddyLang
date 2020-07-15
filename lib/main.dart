@@ -1,7 +1,6 @@
 import 'package:buddylang/models/Visualize_Profile_Picture.dart';
 import 'package:buddylang/models/visualizeProfileBackground.dart';
 import 'package:buddylang/screens/editProfile_screen.dart';
-import 'package:buddylang/screens/home_screen.dart';
 import 'package:buddylang/screens/login_screen.dart';
 import 'package:buddylang/screens/navigation_screen.dart';
 import 'package:buddylang/screens/new_buddy_screen.dart';
@@ -23,7 +22,6 @@ void main() => runApp(MaterialApp(
     '/conversationsScreen': (context) => ConversationsScreen(), // Screen where the list of conversations of the user are displayed
     //'/userTestScreen': (context) => UserTestScreen(),
     '/loginScreen': (context) => LoginScreen(),
-    '/homeScreen': (context) => HomeScreen(),
     '/preLogin': (context) => PreLogin(),
     '/newBuddyScreen': (context) => NewBuddyScreen(),
     '/profileScreen': (context) => ProfileScreen(),

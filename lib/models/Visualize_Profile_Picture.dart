@@ -23,7 +23,7 @@ class VisualizeProfilePictureState extends State<VisualizeProfilePicture> {
     return Scaffold(
       backgroundColor: Colors.grey[100],
       appBar: AppBar(
-        backgroundColor: Colors.lightBlue[600],
+        backgroundColor: Color(0xFF73AEF5),
         title: Text('Profile Picture'),
       ),
       body: StreamBuilder(
@@ -39,9 +39,9 @@ class VisualizeProfilePictureState extends State<VisualizeProfilePicture> {
                 child: Hero(
                   tag: 'imageHero',
                   child: CachedNetworkImage(
-                    imageUrl: user.backgroundImageUrl == null
+                    imageUrl: user.profileImageUrl == null
                             ? defaultImage
-                            : user.backgroundImageUrl,
+                            : user.profileImageUrl,
                     placeholder: (context, imageUrl) =>
                         CircularProgressIndicator(),
                     errorWidget: (context, imageUrl, error) =>

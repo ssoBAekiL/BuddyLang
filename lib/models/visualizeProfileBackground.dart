@@ -25,7 +25,7 @@ class  VisualizeProfileBackgroundState extends State< VisualizeProfileBackground
     return Scaffold(
       backgroundColor: Colors.grey[100],
       appBar: AppBar(
-        backgroundColor: Colors.lightBlue[600],
+        backgroundColor: Color(0xFF73AEF5),
         title: Text('Background Picture'),
       ),
       body: StreamBuilder(

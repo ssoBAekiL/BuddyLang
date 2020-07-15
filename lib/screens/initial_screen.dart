@@ -1,8 +1,6 @@
 import 'package:buddylang/models/user.dart';
 import 'package:buddylang/models/user_data.dart';
-import 'package:buddylang/screens/conversations_screen.dart';
 import 'package:buddylang/screens/editProfile_screen.dart';
-import 'package:buddylang/screens/home_screen.dart';
 import 'package:buddylang/screens/login_screen.dart';
 import 'package:buddylang/screens/navigation_screen.dart';
 import 'package:buddylang/services/auth_service.dart';
@@ -38,17 +36,24 @@ class UserVerification extends StatelessWidget {
               builder: (BuildContext context,
                   AsyncSnapshot<DocumentSnapshot> snapshot) {
                 if (!snapshot.hasData) {
-                  return Center(
-                    child: CircularProgressIndicator(),
+                  return Scaffold(
+                    body: Center(
+                        child: Padding(
+                          padding: const EdgeInsets.all(50.0),
+                          child: Image(
+                              image: AssetImage('assets/logos/logo_nosfondo.png')),
+                        )
+                        //child: CircularProgressIndicator(),
+                        ),
                   );
                 } else {
                   User user = User.fromSnapshot(snapshot.data);
                   if (user.bio == null ||
                       user.interests == null ||
                       user.languages == null) //||
-                      //user.birthDate == null ||
-                      //user.livingCountry == null ||
-                      //user.name == null)
+                    //user.birthDate == null ||
+                    //user.livingCountry == null ||
+                    //user.name == null)
                     return EditProfile();
                   else
                     return NavigationScreen();

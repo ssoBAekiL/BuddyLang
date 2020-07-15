@@ -1,5 +1,3 @@
-
-import 'package:buddylang/screens/home_screen.dart';
 import 'package:buddylang/services/auth_service.dart';
 import 'package:buddylang/utilities/constants.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -170,7 +168,7 @@ class _LoginScreenState extends State<LoginScreen> {
               hintStyle: kHintTextStyle,
             ),
             validator: (input) => input.length < 6
-                ? 'La password deve essere di almeno 6 caratteri'
+                ? 'The password must be at least 6 characters long'
                 : null,
             onSaved: (input) => _password = input,
           ),
@@ -181,18 +179,22 @@ class _LoginScreenState extends State<LoginScreen> {
 
   _submit() async {
     final authService = Provider.of<AuthService>(context, listen: false);
-  //  final FirebaseAuth _auth = FirebaseAuth.instance;
-   // FirebaseUser user = await _auth.currentUser();
-
-  
+    final FirebaseAuth _auth = FirebaseAuth.instance;
+    FirebaseUser user = await _auth.currentUser();
     try {
       if (_selectedIndex == 0 && _loginFormKey.currentState.validate()) {
         _loginFormKey.currentState.save();
-        await authService.login(_email, _password);
+
+        await authService.login(_email, _password).then( (value){
+          if(!value)
+          showVerifyLoginEmailSentDialog();});
+        
       } else if (_selectedIndex == 1 &&
           _signupFormKey.currentState.validate()) {
-       _signupFormKey.currentState.save();
-       authService.signup(_name, _email, _password).then(await _showVerifyEmailSentDialog());
+        _signupFormKey.currentState.save();
+        authService
+            .signup(_name, _email, _password)
+            .then(await _showVerifyEmailSentDialog());
       }
     } on PlatformException catch (err) {
       _showErrorDialog(err.message);
@@ -209,7 +211,6 @@ class _LoginScreenState extends State<LoginScreen> {
           actions: <Widget>[
             FlatButton(
               child: Text('Ok'),
-              
               onPressed: () => Navigator.pop(context),
             ),
           ],
@@ -218,7 +219,7 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-signOut() {
+  signOut() {
     final FirebaseAuth _auth = FirebaseAuth.instance;
     _auth.signOut();
     return Container(width: 0.0, height: 0.0);
@@ -227,39 +228,18 @@ signOut() {
   _showVerifyEmailSentDialog() {
     showDialog(
       context: context,
-      builder: (_) {
+      builder: (BuildContext context) {
         // return object of type Dialog
         return AlertDialog(
           title: new Text("Verify your account"),
           content:
               new Text("Link to verify account has been sent to your email"),
-          /* actions: <Widget>[
-            new FlatButton(
-              child: new Text("Dismiss"),
-              onPressed: () {
-                Navigator.pop(context);
-              },
-            ),
-          ],*/
-        );
-      },
-    );
-  }
-
-  _showResetPwd() {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        // return object of type Dialog
-        return AlertDialog(
-          title: new Text("Reset your Password"),
-          content:
-              new Text("Link to verify reset your password has been sent to your email"),
           actions: <Widget>[
             new FlatButton(
               child: new Text("Dismiss"),
               onPressed: () {
                 Navigator.of(context).pop();
+                signOut();
               },
             ),
           ],
@@ -268,27 +248,22 @@ signOut() {
     );
   }
 
-/*
-   void _showVerifyEmailDialog() {
+  showVerifyLoginEmailSentDialog() {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         // return object of type Dialog
+
         return AlertDialog(
-          title: new Text("Verify your account"),
-          content: new Text("Please verify account in the link sent to email"),
+          title: new Text("First Verify your account"),
+          content: new Text(
+              "We sent a link to verify account has been sent to your email"),
           actions: <Widget>[
-            new FlatButton(
-              child: new Text("Resent link"),
-              onPressed: () {
-                Navigator.of(context).pop();
-                _resentVerifyEmail();
-              },
-            ),
             new FlatButton(
               child: new Text("Dismiss"),
               onPressed: () {
                 Navigator.of(context).pop();
+                signOut();
               },
             ),
           ],
@@ -296,27 +271,77 @@ signOut() {
       },
     );
   }
-*/
 
-/*
-  void _resentVerifyEmail() {
-    widget.auth.sendEmailVerification();
-    _showVerifyEmailSentDialog();
+  _showResetPassword() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        // return object of type Dialog
+        return AlertDialog(
+          title: new Text("Reset your password"),
+          content: new Text(
+              "Link to reset your password has been sent to your email"),
+          actions: <Widget>[
+            new FlatButton(
+              child: new Text("Dismiss"),
+              onPressed: () {
+                Navigator.of(context).pop();
+                signOut();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
-  */
 
- // bool _rememberMe = false;
+  /*
+                                void _showVerifyEmailDialog() {
+                                 showDialog(
+                                   context: context,
+                                   builder: (BuildContext context) {
+                                     // return object of type Dialog
+                                     return AlertDialog(
+                                       title: new Text("Verify your account"),
+                                       content: new Text("Please verify account in the link sent to email"),
+                                       actions: <Widget>[
+                                         new FlatButton(
+                                           child: new Text("Resent link"),
+                                           onPressed: () {
+                                             Navigator.of(context).pop();
+                                             _resentVerifyEmail();
+                                           },
+                                         ),
+                                         new FlatButton(
+                                           child: new Text("Dismiss"),
+                                           onPressed: () {
+                                             Navigator.of(context).pop();
+                                           },
+                                         ),
+                                       ],
+                                     );
+                                   },
+                                 );
+                               }
+                             */
+
+  /*
+                               void _resentVerifyEmail() {
+                                 widget.auth.sendEmailVerification();
+                                 _showVerifyEmailSentDialog();
+                               }
+                               */
+
+  // bool _rememberMe = false;
 
   _buildForgotPasswordBtn() {
     final authService = Provider.of<AuthService>(context, listen: false);
     return Container(
-      
       alignment: Alignment.centerRight,
       child: FlatButton(
-        
-        onPressed: (){
+        onPressed: () {
           authService.resetPassword(_email);
-        
+          _showResetPassword();
         },
         padding: EdgeInsets.only(right: 0.0),
         child: Text(
@@ -327,34 +352,34 @@ signOut() {
     );
   }
 
-/*
-  Widget _buildRememberMeCheckbox() {
-    return Container(
-      height: 20.0,
-      child: Row(
-        children: <Widget>[
-          Theme(
-            data: ThemeData(unselectedWidgetColor: Colors.white),
-            child: Checkbox(
-              value: _rememberMe,
-              checkColor: Colors.green,
-              activeColor: Colors.white,
-              onChanged: (value) {
-                setState(() {
-                  _rememberMe = value;
-                });
-              },
-            ),
-          ),
-          Text(
-            'Remember me',
-            style: kLabelStyle,
-          ),
-        ],
-      ),
-    );
-  }
-*/
+  /*
+                               Widget _buildRememberMeCheckbox() {
+                                 return Container(
+                                   height: 20.0,
+                                   child: Row(
+                                     children: <Widget>[
+                                       Theme(
+                                         data: ThemeData(unselectedWidgetColor: Colors.white),
+                                         child: Checkbox(
+                                           value: _rememberMe,
+                                           checkColor: Colors.green,
+                                           activeColor: Colors.white,
+                                           onChanged: (value) {
+                                             setState(() {
+                                               _rememberMe = value;
+                                             });
+                                           },
+                                         ),
+                                       ),
+                                       Text(
+                                         'Remember me',
+                                         style: kLabelStyle,
+                                       ),
+                                     ],
+                                   ),
+                                 );
+                               }
+                             */
 
   Widget _buildLoginBtn() {
     return Container(

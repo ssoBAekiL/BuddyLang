@@ -1,7 +1,6 @@
 /******************************/
 /*          BuddyLang         */
 /*  Author: Pablo Borrelli    */
-/*  Last updated: 29/05/2020  */
 /******************************/
 
 import 'dart:io';

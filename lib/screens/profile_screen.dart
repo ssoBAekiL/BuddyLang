@@ -152,7 +152,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 Widget _appBar () {
     return new AppBar(
-      backgroundColor: Colors.lightBlue,
+      backgroundColor: Color(0xFF73AEF5),
       title: Text(
         'BuddyLang',
         style : TextStyle(color: Colors.white,
@@ -237,7 +237,7 @@ Widget _nameYear(){
                 placeholder: (context, url) => SizedBox(
                     width: 80.0,
                     height: 80.0,
-                    child: CircularProgressIndicator()),
+                    child: null),
                 errorWidget: (context, url, error) =>
                     Icon(Icons.error),
               ),

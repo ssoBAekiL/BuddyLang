@@ -1,5 +1,9 @@
+/******************************/
+/*          BuddyLang         */
+/*  Author: Pablo Borrelli    */
+/******************************/
+
 import 'dart:math';
-import 'package:buddylang/models/chat.dart';
 import 'package:buddylang/models/user.dart';
 import 'package:buddylang/screens/navigation_screen.dart';
 import 'package:buddylang/services/database.dart';
@@ -112,7 +116,7 @@ class _NewBuddyScreenState extends State<NewBuddyScreen> {
                   fontSize: 28),
             ),
             centerTitle: true,
-            backgroundColor: Colors.lightBlue[600]),
+            backgroundColor: Color(0xFF73AEF5)),
         backgroundColor: Colors.grey[100],
         body: StreamBuilder(
             stream: DatabaseService().getUserStream(User.uid),
@@ -167,7 +171,7 @@ class _NewBuddyScreenState extends State<NewBuddyScreen> {
                           elevation: 16,
                           underline: Container(
                             height: 2,
-                            color: Colors.lightBlue[600],
+                            color: Color(0xFF73AEF5),
                           ),
                           onChanged: (String newValue) {
                             setState(() {
@@ -203,7 +207,7 @@ class _NewBuddyScreenState extends State<NewBuddyScreen> {
                           elevation: 16,
                           underline: Container(
                             height: 2,
-                            color: Colors.lightBlue[600],
+                            color: Color(0xFF73AEF5),
                           ),
                           onChanged: (String newValue) {
                             setState(() {
@@ -223,7 +227,7 @@ class _NewBuddyScreenState extends State<NewBuddyScreen> {
                       ),
                       Center(
                         child: RaisedButton(
-                            color: Colors.lightBlue[500],
+                            color: Color(0xFF73AEF5),
                             child: Text('New buddy!'),
                             onPressed: () => _searchBuddy(context)),
                       ),

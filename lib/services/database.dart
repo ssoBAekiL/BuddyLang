@@ -1,8 +1,6 @@
 /******************************/
 /*          BuddyLang         */
 /*  Author: Pablo Borrelli    */
-/*  Last updated: 29/05/2020  */
-import 'package:buddylang/screens/home_screen.dart';
 /******************************/
 
 import 'package:cloud_firestore/cloud_firestore.dart';
