@@ -134,7 +134,7 @@ class AuthService implements BaseAuth {
       final FirebaseUser user =
           (await _auth.signInWithCredential(credential)).user;
       if (user.uid != null) {
-        usersRef.document(user.uid).updateData({
+        usersRef.document(user.uid).setData({
           'name': user.displayName,
           'email': user.email,
           'token': token,
@@ -167,7 +167,7 @@ class AuthService implements BaseAuth {
         final FirebaseUser user =
             (await FirebaseAuth.instance.signInWithCredential(credential)).user;
         if (user != null) {
-          usersRef.document(user.uid).updateData({
+          usersRef.document(user.uid).setData({
             'name': user.displayName,
             'email': user.email,
           });
